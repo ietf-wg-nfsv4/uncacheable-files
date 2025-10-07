@@ -4,12 +4,12 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                           23 March 2025
-Expires: 24 September 2025
+Intended status: Standards Track                          7 October 2025
+Expires: 10 April 2026
 
 
                Adding an Uncacheable Attribute to NFSv4.2
-                 draft-haynes-nfsv4-uncacheable-latest
+                  draft-ietf-nfsv4-uncacheable-latest
 
 Abstract
 
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 September 2025.
+   This Internet-Draft will expire on 10 April 2026.
 
 Copyright Notice
 
