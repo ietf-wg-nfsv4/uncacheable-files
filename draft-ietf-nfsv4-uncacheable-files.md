@@ -58,7 +58,7 @@ on the NFSv4 working group mailing list (nfsv4@ietf.org),
 which is archived at
 [](https://mailarchive.ietf.org/arch/search/?email_list=nfsv4). Source
 code and issues list for this draft can be found at
-[](https://github.com/ietf-wg-nfsv4/uncacheable).
+[](https://github.com/ietf-wg-nfsv4/uncacheable-files).
 
 Working Group information can be found at [](https://github.com/ietf-wg-nfsv4).
 
@@ -117,8 +117,8 @@ Further, the definitions of the following terms are referenced as follows:
 - GETATTR ({{Section 18.7 of RFC8881}})
 - NF4REG ({{Section 5.8.1.2 of RFC8881}})
 - NFS4ERR_ATTRNOTSUPP ({{Section 15.1.15.1 of RFC8881}}
+- SETATTR ({{Section 18.30 of RFC8881}})
 - system ({{Section 5.8.2.36 of RFC8881}})
-- type ({{Section 5.8.1.2 of RFC8881}})
 
 ## Requirements Language
 
@@ -147,9 +147,9 @@ other words, the file data is also not cacheable.
 
 ~~~ xdr
 ///
-/// typedef bool            fattr4_file_uncacheable;
+/// typedef bool            fattr4_uncacheable_file;
 ///
-/// const FATTR4_FILE_UNCACHEABLE       = 87;
+/// const FATTR4_UNCACHEABLE_FILE       = 87;
 ///
 ~~~
 
