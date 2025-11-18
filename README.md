@@ -1,11 +1,11 @@
-# Adding an Uncacheable Attribute to NFSv4.2
+# Adding an Uncacheable File Attribute to NFSv4.2
 
-This is the working area for the individual Internet-Draft, "Adding an Uncacheable Attribute to NFSv4.2".
+This is the working area for the individual Internet-Draft, "Adding an Uncacheable File Attribute to NFSv4.2".
 
-* [Editor's Copy](https://ietf-wg-nfsv4.github.io/uncacheable/#go.draft-haynes-nfsv4-uncacheable.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-haynes-nfsv4-uncacheable)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-haynes-nfsv4-uncacheable)
-* [Compare Editor's Copy to Individual Draft](https://ietf-wg-nfsv4.github.io/uncacheable/#go.draft-haynes-nfsv4-uncacheable.diff)
+* [Editor's Copy](https://ietf-wg-nfsv4.github.io/uncacheable/#go.draft-ietf-nfsv4-uncacheable-files.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-nfsv4-uncacheable-files)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-ietf-nfsv4-uncacheable-files)
+* [Compare Editor's Copy to Individual Draft](https://ietf-wg-nfsv4.github.io/uncacheable/#go.draft-ietf-nfsv4-uncacheable-files.diff)
 
 
 ## Contributing
