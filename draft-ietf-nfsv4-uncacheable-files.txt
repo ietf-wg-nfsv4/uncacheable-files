@@ -26,7 +26,7 @@ Note to Readers
    mailing list (nfsv4@ietf.org), which is archived at
    https://mailarchive.ietf.org/arch/search/?email_list=nfsv4.  Source
    code and issues list for this draft can be found at
-   https://github.com/ietf-wg-nfsv4/uncacheable.
+   https://github.com/ietf-wg-nfsv4/uncacheable-files.
 
    Working Group information can be found at https://github.com/ietf-wg-
    nfsv4.
@@ -134,9 +134,9 @@ Table of Contents
 
    *  NFS4ERR_ATTRNOTSUPP (Section 15.1.15.1 of [RFC8881]
 
-   *  system (Section 5.8.2.36 of [RFC8881])
+   *  SETATTR (Section 18.30 of [RFC8881])
 
-   *  type (Section 5.8.1.2 of [RFC8881])
+   *  system (Section 5.8.2.36 of [RFC8881])
 
 1.2.  Requirements Language
 
@@ -168,9 +168,9 @@ Table of Contents
 3.  XDR for Offline Attribute
 
    ///
-   /// typedef bool            fattr4_file_uncacheable;
+   /// typedef bool            fattr4_uncacheable_file;
    ///
-   /// const FATTR4_FILE_UNCACHEABLE       = 87;
+   /// const FATTR4_UNCACHEABLE_FILE       = 87;
    ///
 
 4.  Extraction of XDR
