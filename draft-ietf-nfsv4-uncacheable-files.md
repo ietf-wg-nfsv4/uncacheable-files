@@ -69,8 +69,8 @@ Working Group information can be found at [](https://github.com/ietf-wg-nfsv4).
 With a remote filesystem, the client typically caches file contents
 in order to improve performance.  Several assumptions are made about
 the rate of change in the number of clients trying to concurrently
-access a file.  With NFSv4.2, this could practically be mitigated
-practically by file delegations for the file contents.
+access a file.  With NFSv4.2, this could be mitigated by file
+delegations for the file contents.
 
 There are prior efforts to bypass file caching.  In Highly Parallel
 Computing (HPC) workloads, file caching is bypassed in order to
@@ -78,18 +78,14 @@ achieve consistent work flows.
 
 This document introduces the uncacheable file attribute to NFSv4.2
 to bypass file caching on the client. As such, it is an OPTIONAL
-to implement attribute for NFSv4.2. However, if both the client and
+attribute to implement for NFSv4.2. However, if both the client and
 the server support this attribute, then the client MUST follow the
-semantics of uncacheable.[^2]
-
-[^2]: What about mixed modes?
+semantics of uncacheable.
 
 A client can easily determine whether or not a server supports
 the uncacheable file attribute with a simple GETATTR on any
-file. [^3] If the server does not support the uncacheable
+file. If the server does not support the uncacheable
 attribute, it will return an error of NFS4ERR_ATTRNOTSUPP.
-
-[^3]: Is this still true?
 
 The only way that the server can determine that the client supports
 the attribute is if the client sends either a GETATTR or a SETATTR
@@ -116,7 +112,7 @@ Further, the definitions of the following terms are referenced as follows:
 - file delegations ({{Section 10.2 of RFC8881}})
 - GETATTR ({{Section 18.7 of RFC8881}})
 - NF4REG ({{Section 5.8.1.2 of RFC8881}})
-- NFS4ERR_ATTRNOTSUPP ({{Section 15.1.15.1 of RFC8881}}
+- NFS4ERR_ATTRNOTSUPP ({{Section 15.1.15.1 of RFC8881}})
 - SETATTR ({{Section 18.30 of RFC8881}})
 - system ({{Section 5.8.2.36 of RFC8881}})
 
@@ -129,8 +125,8 @@ Further, the definitions of the following terms are referenced as follows:
 The uncacheable file attribute instructs the client to bypass its
 page cache for the file. This behavior is similar to using the
 O_DIRECT flag with the open call ({{open}}). This can be beneficial
-for files that are not shared or for files that do not exhibit
-access patterns suitable for caching.
+for files that are not shared or do not exhibit access patterns
+suitable for caching.
 
 However, the real need for bypassing write caching is evident in
 HPC workloads. In general, these involve massive data transfers and
@@ -140,10 +136,9 @@ unpredictable latency, as data is buffered and flushed later.
 ## Uncacheable Files {#sec_files}
 
 If a file object is marked as uncacheable, all modifications to
-the file MUST be immediately sent from the client to the server. In
-other words, the file data is also not cacheable.
+the file MUST be immediately sent from the client to the server.
 
-# XDR for Offline Attribute
+# XDR for Uncacheable Attribute
 
 ~~~ xdr
 ///
