@@ -82,6 +82,9 @@ attribute to implement for NFSv4.2. However, if both the client and
 the server support this attribute, then the client MUST follow the
 semantics of uncacheable.
 
+The uncacheable file attribute is read-only and per file. The
+data type is bool.
+
 A client can easily determine whether or not a server supports
 the uncacheable file attribute with a simple GETATTR on any
 file. If the server does not support the uncacheable
