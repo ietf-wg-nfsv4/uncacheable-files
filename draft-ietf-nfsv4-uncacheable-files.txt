@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                        18 November 2025
-Expires: 22 May 2026
+Intended status: Standards Track                        29 December 2025
+Expires: 2 July 2026
 
 
             Adding an Uncacheable File Attribute to NFSv4.2
@@ -46,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 May 2026.
+   This Internet-Draft will expire on 2 July 2026.
 
 Copyright Notice
 
@@ -69,7 +69,7 @@ Table of Contents
      1.2.  Requirements Language
    2.  Caching of File Data
      2.1.  Uncacheable Files
-   3.  XDR for Offline Attribute
+   3.  XDR for Uncacheable Attribute
    4.  Extraction of XDR
    5.  Security Considerations
    6.  IANA Considerations
@@ -84,25 +84,26 @@ Table of Contents
    With a remote filesystem, the client typically caches file contents
    in order to improve performance.  Several assumptions are made about
    the rate of change in the number of clients trying to concurrently
-   access a file.  With NFSv4.2, this could practically be mitigated
-   practically by file delegations for the file contents.
+   access a file.  With NFSv4.2, this could be mitigated by file
+   delegations for the file contents.
 
    There are prior efforts to bypass file caching.  In Highly Parallel
    Computing (HPC) workloads, file caching is bypassed in order to
    achieve consistent work flows.
 
    This document introduces the uncacheable file attribute to NFSv4.2 to
-   bypass file caching on the client.  As such, it is an OPTIONAL to
-   implement attribute for NFSv4.2.  However, if both the client and the
-   server support this attribute, then the client MUST follow the
+   bypass file caching on the client.  As such, it is an OPTIONAL
+   attribute to implement for NFSv4.2.  However, if both the client and
+   the server support this attribute, then the client MUST follow the
    semantics of uncacheable.
-   // What about mixed modes?
+
+   The uncacheable file attribute is read-only and per file.  The data
+   type is bool.
 
    A client can easily determine whether or not a server supports the
-   uncacheable file attribute with a simple GETATTR on any file.
-   // Is this still true?  If the server does not support the
-   uncacheable attribute, it will return an error of
-   NFS4ERR_ATTRNOTSUPP.
+   uncacheable file attribute with a simple GETATTR on any file.  If the
+   server does not support the uncacheable attribute, it will return an
+   error of NFS4ERR_ATTRNOTSUPP.
 
    The only way that the server can determine that the client supports
    the attribute is if the client sends either a GETATTR or a SETATTR
@@ -132,7 +133,7 @@ Table of Contents
 
    *  NF4REG (Section 5.8.1.2 of [RFC8881])
 
-   *  NFS4ERR_ATTRNOTSUPP (Section 15.1.15.1 of [RFC8881]
+   *  NFS4ERR_ATTRNOTSUPP (Section 15.1.15.1 of [RFC8881])
 
    *  SETATTR (Section 18.30 of [RFC8881])
 
@@ -151,8 +152,8 @@ Table of Contents
    The uncacheable file attribute instructs the client to bypass its
    page cache for the file.  This behavior is similar to using the
    O_DIRECT flag with the open call ([open]).  This can be beneficial
-   for files that are not shared or for files that do not exhibit access
-   patterns suitable for caching.
+   for files that are not shared or do not exhibit access patterns
+   suitable for caching.
 
    However, the real need for bypassing write caching is evident in HPC
    workloads.  In general, these involve massive data transfers and
@@ -162,10 +163,9 @@ Table of Contents
 2.1.  Uncacheable Files
 
    If a file object is marked as uncacheable, all modifications to the
-   file MUST be immediately sent from the client to the server.  In
-   other words, the file data is also not cacheable.
+   file MUST be immediately sent from the client to the server.
 
-3.  XDR for Offline Attribute
+3.  XDR for Uncacheable Attribute
 
    ///
    /// typedef bool            fattr4_uncacheable_file;
