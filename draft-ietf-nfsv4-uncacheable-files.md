@@ -80,19 +80,19 @@ This document introduces the uncacheable file attribute to NFSv4.2
 to bypass file caching on the client. As such, it is an OPTIONAL
 attribute to implement for NFSv4.2. However, if both the client and
 the server support this attribute, then the client MUST follow the
-semantics of uncacheable.
+semantics of the uncacheable file attribute.
 
 The uncacheable file attribute is read-only and per file. The
 data type is bool.
 
 A client can easily determine whether or not a server supports
 the uncacheable file attribute with a simple GETATTR on any
-file. If the server does not support the uncacheable
+file. If the server does not support the uncacheable file
 attribute, it will return an error of NFS4ERR_ATTRNOTSUPP.
 
 The only way that the server can determine that the client supports
 the attribute is if the client sends either a GETATTR or a SETATTR
-with the uncacheable attribute.
+with the uncacheable file attribute.
 
 As bypassing file caching is file based, it is only applicable for
 dirents which are of type attribute value of NF4REG.
@@ -154,7 +154,7 @@ the file MUST be immediately sent from the client to the server.
 # Extraction of XDR
 
 This document contains the external data representation (XDR)
-{{RFC4506}} description of the uncacheable attribute.  The XDR
+{{RFC4506}} description of the uncacheable file attribute.  The XDR
 description is presented in a manner that facilitates easy extraction
 into a ready-to-compile format. To extract the machine-readable XDR
 description, use the following shell script:
