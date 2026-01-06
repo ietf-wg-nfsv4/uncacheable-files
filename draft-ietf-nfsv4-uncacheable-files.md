@@ -40,16 +40,23 @@ informative:
     author:
       org: IEEE
     date:  2013
+  OPEN-O_DIRECT:
+    title: open(2) — Linux system call for opening files (O_DIRECT)
+    target: https://man7.org/linux/man-pages/man2/open.2.html
+    author:
+    - org: Linux man-pages project
+    date: 2024
   RFC1813:
 
 --- abstract
 
 The Network File System version 4.2 (NFSv4.2) allows a client to
-cache data for file objects.  Caching file data can lead to performance
-issues if the cache hit rate is low.  This document introduces a
-new uncacheable file data attribute for NFSv4.2.  Files marked as
-uncacheable file data SHOULD NOT have their data be stored in
-client-side caches.  This document extends NFSv4.2 (see RFC7862).
+cache data for file objects.  Applications on some clients can
+control the caching of data, but there is no way to achieve this
+at a system level.  This document introduces a new uncacheable file
+data attribute for NFSv4.2.  Files marked as uncacheable file data
+SHOULD NOT have their data be stored in client-side caches.  This
+document extends NFSv4.2 (see RFC7862).
 
 --- note_Note_to_Readers
 
@@ -75,6 +82,10 @@ delegations for the file contents.
 There are prior efforts to bypass file caching.  In Highly Parallel
 Computing (HPC) workloads, file caching is bypassed in order to
 achieve consistent work flows.
+
+Applications can use O_DIRECT on open (see {{OPEN-O_DIRECT}}) to
+force the client to bypass the page cache, but the limitation
+is that each application must be modified to use this flag.
 
 This document introduces the uncacheable file data attribute to
 NFSv4.2 to bypass file caching on the client. As such, it is an
