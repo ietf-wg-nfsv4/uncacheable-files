@@ -1,6 +1,6 @@
 ---
-title: Adding an Uncacheable File Attribute to NFSv4.2
-abbrev: Uncacheable File Attribute
+title: Adding an Uncacheable File Data Attribute to NFSv4.2
+abbrev: Uncacheable File
 docname: draft-ietf-nfsv4-uncacheable-files-latest
 category: std
 date: {DATE}
@@ -47,9 +47,9 @@ informative:
 The Network File System version 4.2 (NFSv4.2) allows a client to
 cache data for file objects.  Caching file data can lead to performance
 issues if the cache hit rate is low.  This document introduces a
-new uncacheable file attribute for NFSv4.2.  Files marked as
-uncacheable MUST NOT be stored in client-side caches.  This document
-extends NFSv4.2 (see RFC7862).
+new uncacheable file data attribute for NFSv4.2.  Files marked as
+uncacheable MUST NOT have their data be stored in client-side caches.
+This document extends NFSv4.2 (see RFC7862).
 
 --- note_Note_to_Readers
 
@@ -76,23 +76,23 @@ There are prior efforts to bypass file caching.  In Highly Parallel
 Computing (HPC) workloads, file caching is bypassed in order to
 achieve consistent work flows.
 
-This document introduces the uncacheable file attribute to NFSv4.2
-to bypass file caching on the client. As such, it is an OPTIONAL
-attribute to implement for NFSv4.2. However, if both the client and
-the server support this attribute, then the client MUST follow the
-semantics of the uncacheable file attribute.
+This document introduces the uncacheable file data attribute to
+NFSv4.2 to bypass file caching on the client. As such, it is an
+OPTIONAL attribute to implement for NFSv4.2. However, if both the
+client and the server support this attribute, then the client MUST
+follow the semantics of the uncacheable file data attribute.
 
-The uncacheable file attribute is read-only and per file. The
+The uncacheable file data attribute is read-only and per file. The
 data type is bool.
 
-A client can easily determine whether or not a server supports
-the uncacheable file attribute with a simple GETATTR on any
-file. If the server does not support the uncacheable file
-attribute, it will return an error of NFS4ERR_ATTRNOTSUPP.
+A client can easily determine whether or not a server supports the
+uncacheable file data attribute with a simple GETATTR on any file.
+If the server does not support the uncacheable file data attribute,
+it will return an error of NFS4ERR_ATTRNOTSUPP.
 
 The only way that the server can determine that the client supports
-the attribute is if the client sends either a GETATTR or a SETATTR
-with the uncacheable file attribute.
+the attribute is if the client sends either a GETATTR with the
+uncacheable file data attribute.
 
 As bypassing file caching is file based, it is only applicable for
 dirents which are of type attribute value of NF4REG.
@@ -125,8 +125,8 @@ Further, the definitions of the following terms are referenced as follows:
 
 # Caching of File Data
 
-The uncacheable file attribute instructs the client to bypass its
-page cache for the file. This behavior is similar to using the
+The uncacheable file data attribute instructs the client to bypass
+its page cache for the file. This behavior is similar to using the
 O_DIRECT flag with the open call ({{open}}). This can be beneficial
 for files that are not shared or do not exhibit access patterns
 suitable for caching.
@@ -138,16 +138,16 @@ unpredictable latency, as data is buffered and flushed later.
 
 ## Uncacheable Files {#sec_files}
 
-If a file object is marked as uncacheable, all modifications to
-the file MUST be immediately sent from the client to the server.
+If a file object is marked as uncacheable file data, all modifications
+to the file MUST be immediately sent from the client to the server.
 
 # XDR for Uncacheable Attribute
 
 ~~~ xdr
 ///
-/// typedef bool            fattr4_uncacheable_file;
+/// typedef bool            fattr4_uncacheable_file_data;
 ///
-/// const FATTR4_UNCACHEABLE_FILE       = 87;
+/// const FATTR4_UNCACHEABLE_FILE_DATA       = 87;
 ///
 ~~~
 
