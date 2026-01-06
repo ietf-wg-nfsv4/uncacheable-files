@@ -41,12 +41,12 @@ informative:
       Linux: "Programmer's Manual"
   OPEN:
     title: open(2) — open and possibly create a file
-      target: https://man7.org/linux/man-pages/man2/open.2.html
-      author:
-      - org: Linux man-pages project
-      date: 2024
-      seriesinfo:
-        Linux: "Programmer's Manual"
+    target: https://man7.org/linux/man-pages/man2/open.2.html
+    author:
+    - org: Linux man-pages project
+    date: 2024
+    seriesinfo:
+      Linux: "Programmer's Manual"
   OPEN-O_DIRECT:
     title: open(2) — Linux system call for opening files (O_DIRECT)
     target: https://man7.org/linux/man-pages/man2/open.2.html
