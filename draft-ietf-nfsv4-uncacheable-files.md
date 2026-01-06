@@ -204,7 +204,7 @@ This document has no IANA actions.
 Trond Myklebust, Mike Snitzer, and Thomas Haynes all worked on the
 prototype at Hammerspace.
 
-Rick Macklem and Dave Noveck reviewed the document.
+Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.
 
 Chris Inacio, Brian Pawlowski, and Gorry Fairhurst helped guide
 this process.
