@@ -60,6 +60,14 @@ informative:
       org: IEEE
     date:  2013
   RFC1813:
+  SOLARIS-FORCEDIRECTIO:
+    title: mount -o forcedirectio — Solaris forcedirectio mount option
+    target: https://docs.oracle.com/en/operating-systems/solaris/oracle-solaris/11.4/manage-nfs/mount-options-for-nfs-file-systems.html
+    author:
+    - org: Oracle Solaris Documentation
+    date: 2023
+    seriesinfo:
+      Solaris: "Administration Guide"
 
 --- abstract
 
@@ -136,6 +144,7 @@ changes to be bunched together for writing to the server.
 
 Further, the definitions of the following terms are referenced as follows:
 
+- COMMIT (({{Section 18.3 of RFC8881}})
 - file delegations ({{Section 10.2 of RFC8881}})
 - GETATTR ({{Section 18.7 of RFC8881}})
 - NF4REG ({{Section 5.8.1.2 of RFC8881}})
@@ -167,6 +176,16 @@ to the file SHOULD be immediately sent from the client to the server.
 I.e., if a NFSv4.2 client fails to query this attribute, then it
 can not meet the requirements of the attribute.
 
+For uncacheable data, the client MUST NOT retain file data in its
+local data cache for the purpose of satisfying subsequent READ
+requests or delaying transmission of WRITE data. Reads MUST bypass
+the client data cache, and WRITE data MUST NOT be retained for
+read-after-write satisfaction or for the purpose of combining
+multiple WRITE requests.
+
+Caching of UNSTABLE WRITE data required to support the NFSv4.2
+COMMIT operation is permitted and unaffected by this requirement.
+
 If the fattr4_uncacheable_file_data is not set when a client opens
 a file and is changed whilst the file is open, the client is not
 responsible for bypassing the page cache. It could flush the page
@@ -187,7 +206,9 @@ do not support O_DIRECT to be able to use O_DIRECT semantics.  One
 approach to support this would be to add a new parameter to mount
 {{MOUNT}} that specifies all newly created files under that mount
 point would hsave their data not cacheable. Then the NFSv4.2 client
-would use a SETATTR to set fattr4_uncacheable_file_data.
+would use a SETATTR to set fattr4_uncacheable_file_data. This
+approach is similar to the Solaris forcedirectio (See
+{{SOLARIS-FORCEDIRECTIO}}) mount option.
 
 # XDR for Uncacheable Attribute
 
