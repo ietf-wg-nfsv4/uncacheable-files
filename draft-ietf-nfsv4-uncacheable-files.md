@@ -31,21 +31,34 @@ normative:
   RFC8881:
 
 informative:
-  open:
-    title: open and create files.
-    seriesinfo: Linux Programmer's Manual
-  POSIX.1:
-    title: The Open Group Base Specifications Issue 7
-    seriesinfo: IEEE Std 1003.1, 2013 Edition
+  MOUNT:
+    title: mount(2) — mount filesystem
+    target: https://man7.org/linux/man-pages/man2/mount.2.html
     author:
-      org: IEEE
-    date:  2013
+    - org: Linux man-pages project
+    date: 2024
+    seriesinfo:
+      Linux: "Programmer's Manual"
+  OPEN:
+    title: open(2) — open and possibly create a file
+      target: https://man7.org/linux/man-pages/man2/open.2.html
+      author:
+      - org: Linux man-pages project
+      date: 2024
+      seriesinfo:
+        Linux: "Programmer's Manual"
   OPEN-O_DIRECT:
     title: open(2) — Linux system call for opening files (O_DIRECT)
     target: https://man7.org/linux/man-pages/man2/open.2.html
     author:
     - org: Linux man-pages project
     date: 2024
+  POSIX.1:
+    title: The Open Group Base Specifications Issue 7
+    seriesinfo: IEEE Std 1003.1, 2013 Edition
+    author:
+      org: IEEE
+    date:  2013
   RFC1813:
 
 --- abstract
@@ -93,7 +106,7 @@ OPTIONAL attribute to implement for NFSv4.2. However, if both the
 client and the server support this attribute, then the client MUST
 follow the semantics of the uncacheable file data attribute.
 
-The uncacheable file data attribute is read-only and per file. The
+The uncacheable file data attribute is read-write and per file. The
 data type is bool.
 
 A client can easily determine whether or not a server supports the
@@ -102,8 +115,8 @@ If the server does not support the uncacheable file data attribute,
 it will return an error of NFS4ERR_ATTRNOTSUPP.
 
 The only way that the server can determine that the client supports
-the attribute is if the client sends either a GETATTR with the
-uncacheable file data attribute.
+the attribute is if the client sends either a GETATTR or SETATTR
+with the uncacheable file data attribute.
 
 As bypassing file caching is file based, it is only applicable for
 dirents which are of type attribute value of NF4REG.
@@ -138,7 +151,7 @@ Further, the definitions of the following terms are referenced as follows:
 
 The uncacheable file data attribute instructs the client to bypass
 its page cache for the file. This behavior is similar to using the
-O_DIRECT flag with the open call ({{open}}). This can be beneficial
+O_DIRECT flag with the open call ({{OPEN}}). This can be beneficial
 for files that are not shared or do not exhibit access patterns
 suitable for caching.
 
@@ -159,6 +172,15 @@ If the client has a OPEN_DELEGATE_WRITE delegation on the file
 attribute takes precedence over the caching of file data. The
 server can control this by not issuing file delegations for
 files with this attribute.
+
+# Setting the Uncacheable File Data Attribute {#sec_setting}
+
+The uncacheable file data attribute can allow for applications which
+do not support O_DIRECT to be able to use O_DIRECT semantics.  One
+approach to support this would be to add a new parameter to mount
+{{MOUNT}} that specifies all newly created files under that mount
+point would hsave their data not cacheable. Then the NFSv4.2 client
+would use a SETATTR to set fattr4_uncacheable_file_data.
 
 # XDR for Uncacheable Attribute
 
