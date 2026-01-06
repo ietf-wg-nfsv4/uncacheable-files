@@ -17,8 +17,8 @@ Abstract
    cache data for file objects.  Caching file data can lead to
    performance issues if the cache hit rate is low.  This document
    introduces a new uncacheable file data attribute for NFSv4.2.  Files
-   marked as uncacheable MUST NOT have their data be stored in client-
-   side caches.  This document extends NFSv4.2 (see RFC7862).
+   marked as uncacheable file data SHOULD NOT have their data be stored
+   in client-side caches.  This document extends NFSv4.2 (see RFC7862).
 
 Note to Readers
 
@@ -68,7 +68,7 @@ Table of Contents
      1.1.  Definitions
      1.2.  Requirements Language
    2.  Caching of File Data
-     2.1.  Uncacheable Files
+     2.1.  Uncacheable File Data
    3.  XDR for Uncacheable Attribute
    4.  Extraction of XDR
    5.  Security Considerations
@@ -160,11 +160,18 @@ Table of Contents
    require extremely low latency.  Write caching can introduce
    unpredictable latency, as data is buffered and flushed later.
 
-2.1.  Uncacheable Files
+2.1.  Uncacheable File Data
 
    If a file object is marked as uncacheable file data, all
-   modifications to the file MUST be immediately sent from the client to
-   the server.
+   modifications to the file SHOULD be immediately sent from the client
+   to the server.  I.e., if a NFSv4.2 client fails to query this
+   attribute, then it can not meet the requirements of the attribute.
+
+   If the client has a OPEN_DELEGATE_WRITE delegation on the file (see
+   Section 10.4 of [RFC8881]), then the uncacheable file data attribute
+   takes precedence over the caching of file data.  The server can
+   control this by not issuing file delegations for files with this
+   attribute.
 
 3.  XDR for Uncacheable Attribute
 
@@ -267,6 +274,8 @@ Acknowledgments
 
    Trond Myklebust, Mike Snitzer, and Thomas Haynes all worked on the
    prototype at Hammerspace.
+
+   Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.
 
    Chris Inacio, Brian Pawlowski, and Gorry Fairhurst helped guide this
    process.

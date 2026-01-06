@@ -11,8 +11,8 @@
 cache data for file objects.  Caching file data can lead to performance
 issues if the cache hit rate is low.  This document introduces a
 new uncacheable file data attribute for NFSv4.2.  Files marked as
-uncacheable  MUST NOT  have their data be stored in client-side caches.
-This document extends NFSv4.2 (see RFC7862). 
+uncacheable file data  SHOULD NOT  have their data be stored in
+client-side caches.  This document extends NFSv4.2 (see RFC7862). 
     " name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
@@ -1087,8 +1087,8 @@ svg :is([fill="white"], [fill^="#fff"]) {
 cache data for file objects.  Caching file data can lead to performance
 issues if the cache hit rate is low.  This document introduces a
 new uncacheable file data attribute for NFSv4.2.  Files marked as
-uncacheable <span class="bcp14">MUST NOT</span> have their data be stored in client-side caches.
-This document extends NFSv4.2 (see RFC7862).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+uncacheable file data <span class="bcp14">SHOULD NOT</span> have their data be stored in
+client-side caches.  This document extends NFSv4.2 (see RFC7862).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note" id="section-note.1">
       <h2 id="name-note-to-readers">
@@ -1165,7 +1165,7 @@ code and issues list for this draft can be found at
             <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-caching-of-file-data" class="internal xref">Caching of File Data</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-uncacheable-files" class="internal xref">Uncacheable Files</a></p>
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-uncacheable-file-data" class="internal xref">Uncacheable File Data</a></p>
 </li>
             </ul>
 </li>
@@ -1301,11 +1301,18 @@ require extremely low latency.  Write caching can introduce
 unpredictable latency, as data is buffered and flushed later.<a href="#section-2-2" class="pilcrow">¶</a></p>
 <div id="sec_files">
 <section id="section-2.1">
-        <h3 id="name-uncacheable-files">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-uncacheable-files" class="section-name selfRef">Uncacheable Files</a>
+        <h3 id="name-uncacheable-file-data">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-uncacheable-file-data" class="section-name selfRef">Uncacheable File Data</a>
         </h3>
 <p id="section-2.1-1">If a file object is marked as uncacheable file data, all modifications
-to the file <span class="bcp14">MUST</span> be immediately sent from the client to the server.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+to the file <span class="bcp14">SHOULD</span> be immediately sent from the client to the server.
+I.e., if a NFSv4.2 client fails to query this attribute, then it
+can not meet the requirements of the attribute.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">If the client has a OPEN_DELEGATE_WRITE delegation on the file
+(see Section 10.4 of <span>[<a href="#RFC8881" class="cite xref">RFC8881</a>]</span>), then the uncacheable file data
+attribute takes precedence over the caching of file data. The
+server can control this by not issuing file delegations for
+files with this attribute.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1452,8 +1459,9 @@ should be placed in their appropriate sections within the existing XDR.<a href="
       </h2>
 <p id="appendix-A-1">Trond Myklebust, Mike Snitzer, and Thomas Haynes all worked on the
 prototype at Hammerspace.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
-<p id="appendix-A-2">Chris Inacio, Brian Pawlowski, and Gorry Fairhurst helped guide
-this process.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">Chris Inacio, Brian Pawlowski, and Gorry Fairhurst helped guide
+this process.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
