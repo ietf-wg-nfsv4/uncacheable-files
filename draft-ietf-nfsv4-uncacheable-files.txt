@@ -14,11 +14,12 @@ Expires: 10 July 2026
 Abstract
 
    The Network File System version 4.2 (NFSv4.2) allows a client to
-   cache data for file objects.  Caching file data can lead to
-   performance issues if the cache hit rate is low.  This document
-   introduces a new uncacheable file data attribute for NFSv4.2.  Files
-   marked as uncacheable file data SHOULD NOT have their data be stored
-   in client-side caches.  This document extends NFSv4.2 (see RFC7862).
+   cache data for file objects.  Applications on some clients can
+   control the caching of data, but there is no way to achieve this at a
+   system level.  This document introduces a new uncacheable file data
+   attribute for NFSv4.2.  Files marked as uncacheable file data SHOULD
+   NOT have their data be stored in client-side caches.  This document
+   extends NFSv4.2 (see RFC7862).
 
 Note to Readers
 
@@ -69,13 +70,14 @@ Table of Contents
      1.2.  Requirements Language
    2.  Caching of File Data
      2.1.  Uncacheable File Data
-   3.  XDR for Uncacheable Attribute
-   4.  Extraction of XDR
-   5.  Security Considerations
-   6.  IANA Considerations
-   7.  References
-     7.1.  Normative References
-     7.2.  Informative References
+   3.  Setting the Uncacheable File Data Attribute
+   4.  XDR for Uncacheable Attribute
+   5.  Extraction of XDR
+   6.  Security Considerations
+   7.  IANA Considerations
+   8.  References
+     8.1.  Normative References
+     8.2.  Informative References
    Acknowledgments
    Author's Address
 
@@ -91,13 +93,17 @@ Table of Contents
    Computing (HPC) workloads, file caching is bypassed in order to
    achieve consistent work flows.
 
+   Applications can use O_DIRECT on open (see [OPEN-O_DIRECT]) to force
+   the client to bypass the page cache, but the limitation is that each
+   application must be modified to use this flag.
+
    This document introduces the uncacheable file data attribute to
    NFSv4.2 to bypass file caching on the client.  As such, it is an
    OPTIONAL attribute to implement for NFSv4.2.  However, if both the
    client and the server support this attribute, then the client MUST
    follow the semantics of the uncacheable file data attribute.
 
-   The uncacheable file data attribute is read-only and per file.  The
+   The uncacheable file data attribute is read-write and per file.  The
    data type is bool.
 
    A client can easily determine whether or not a server supports the
@@ -106,8 +112,8 @@ Table of Contents
    it will return an error of NFS4ERR_ATTRNOTSUPP.
 
    The only way that the server can determine that the client supports
-   the attribute is if the client sends either a GETATTR with the
-   uncacheable file data attribute.
+   the attribute is if the client sends either a GETATTR or SETATTR with
+   the uncacheable file data attribute.
 
    As bypassing file caching is file based, it is only applicable for
    dirents which are of type attribute value of NF4REG.
@@ -126,6 +132,8 @@ Table of Contents
 
    Further, the definitions of the following terms are referenced as
    follows:
+
+   *  COMMIT ((Section 18.3 of [RFC8881])
 
    *  file delegations (Section 10.2 of [RFC8881])
 
@@ -151,7 +159,7 @@ Table of Contents
 
    The uncacheable file data attribute instructs the client to bypass
    its page cache for the file.  This behavior is similar to using the
-   O_DIRECT flag with the open call ([open]).  This can be beneficial
+   O_DIRECT flag with the open call ([OPEN]).  This can be beneficial
    for files that are not shared or do not exhibit access patterns
    suitable for caching.
 
@@ -167,13 +175,41 @@ Table of Contents
    to the server.  I.e., if a NFSv4.2 client fails to query this
    attribute, then it can not meet the requirements of the attribute.
 
+   For uncacheable data, the client MUST NOT retain file data in its
+   local data cache for the purpose of satisfying subsequent READ
+   requests or delaying transmission of WRITE data.  Reads MUST bypass
+   the client data cache, and WRITE data MUST NOT be retained for read-
+   after-write satisfaction or for the purpose of combining multiple
+   WRITE requests.
+
+   Caching of UNSTABLE WRITE data required to support the NFSv4.2 COMMIT
+   operation is permitted and unaffected by this requirement.
+
+   If the fattr4_uncacheable_file_data is not set when a client opens a
+   file and is changed whilst the file is open, the client is not
+   responsible for bypassing the page cache.  It could flush the page
+   cache and make all subsequent IO be direct, but until the client
+   closes the file and reopens it, it is not required to meet the
+   requirements of the attribute.
+
    If the client has a OPEN_DELEGATE_WRITE delegation on the file (see
    Section 10.4 of [RFC8881]), then the uncacheable file data attribute
    takes precedence over the caching of file data.  The server can
    control this by not issuing file delegations for files with this
    attribute.
 
-3.  XDR for Uncacheable Attribute
+3.  Setting the Uncacheable File Data Attribute
+
+   The uncacheable file data attribute can allow for applications which
+   do not support O_DIRECT to be able to use O_DIRECT semantics.  One
+   approach to support this would be to add a new parameter to mount
+   [MOUNT] that specifies all newly created files under that mount point
+   would hsave their data not cacheable.  Then the NFSv4.2 client would
+   use a SETATTR to set fattr4_uncacheable_file_data.  This approach is
+   similar to the Solaris forcedirectio (See [SOLARIS-FORCEDIRECTIO])
+   mount option.
+
+4.  XDR for Uncacheable Attribute
 
    ///
    /// typedef bool            fattr4_uncacheable_file_data;
@@ -181,7 +217,7 @@ Table of Contents
    /// const FATTR4_UNCACHEABLE_FILE_DATA       = 87;
    ///
 
-4.  Extraction of XDR
+5.  Extraction of XDR
 
    This document contains the external data representation (XDR)
    [RFC4506] description of the uncacheable file attribute.  The XDR
@@ -189,13 +225,17 @@ Table of Contents
    into a ready-to-compile format.  To extract the machine-readable XDR
    description, use the following shell script:
 
+   <CODE BEGINS>
    #!/bin/sh
    grep '^ *///' $* | sed 's?^ */// ??' | sed 's?^ *///$??'
+   <CODE ENDS>
 
    For example, if the script is named 'extract.sh' and this document is
    named 'spec.txt', execute the following command:
 
+   <CODE BEGINS>
    sh extract.sh < spec.txt > uncacheable_prot.x
+   <CODE ENDS>
 
    This script removes leading blank spaces and the sentinel sequence
    '///' from each line.  XDR descriptions with the sentinel sequence
@@ -210,17 +250,17 @@ Table of Contents
    snippets should be placed in their appropriate sections within the
    existing XDR.
 
-5.  Security Considerations
+6.  Security Considerations
 
    This document imposes no new security considerations to NFSv4.2.
 
-6.  IANA Considerations
+7.  IANA Considerations
 
    This document has no IANA actions.
 
-7.  References
+8.  References
 
-7.1.  Normative References
+8.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -230,10 +270,6 @@ Table of Contents
    [RFC4506]  Eisler, M., Ed., "XDR: External Data Representation
               Standard", STD 67, RFC 4506, DOI 10.17487/RFC4506, May
               2006, <https://www.rfc-editor.org/rfc/rfc4506>.
-
-   [RFC4949]  Shirey, R., "Internet Security Glossary, Version 2",
-              FYI 36, RFC 4949, DOI 10.17487/RFC4949, August 2007,
-              <https://www.rfc-editor.org/rfc/rfc4949>.
 
    [RFC7862]  Haynes, T., "Network File System (NFS) Version 4 Minor
               Version 2 Protocol", RFC 7862, DOI 10.17487/RFC7862,
@@ -257,18 +293,28 @@ Table of Contents
               DOI 10.17487/RFC8881, August 2020,
               <https://www.rfc-editor.org/rfc/rfc8881>.
 
-7.2.  Informative References
+8.2.  Informative References
 
-   [open]     "open and create files.", Linux Programmer's Manual ,
-              n.d..
+   [MOUNT]    Linux man-pages project, "mount(2) - mount filesystem",
+              Linux Programmer's Manual, 2024,
+              <https://man7.org/linux/man-pages/man2/mount.2.html>.
 
-   [POSIX.1]  IEEE, "The Open Group Base Specifications Issue 7", IEEE
-              Std 1003.1, 2013 Edition , 2013.
+   [OPEN]     Linux man-pages project, "open(2) - open and possibly
+              create a file", Linux Programmer's Manual, 2024,
+              <https://man7.org/linux/man-pages/man2/open.2.html>.
 
-   [RFC1813]  Callaghan, B., Pawlowski, B., and P. Staubach, "NFS
-              Version 3 Protocol Specification", RFC 1813,
-              DOI 10.17487/RFC1813, June 1995,
-              <https://www.rfc-editor.org/rfc/rfc1813>.
+   [OPEN-O_DIRECT]
+              Linux man-pages project, "open(2) - Linux system call for
+              opening files (O_DIRECT)", 2024,
+              <https://man7.org/linux/man-pages/man2/open.2.html>.
+
+   [SOLARIS-FORCEDIRECTIO]
+              Oracle Solaris Documentation, "mount -o forcedirectio -
+              Solaris forcedirectio mount option",
+              Solaris Administration Guide, 2023,
+              <https://docs.oracle.com/en/operating-systems/solaris/
+              oracle-solaris/11.4/manage-nfs/mount-options-for-nfs-file-
+              systems.html>.
 
 Acknowledgments
 
