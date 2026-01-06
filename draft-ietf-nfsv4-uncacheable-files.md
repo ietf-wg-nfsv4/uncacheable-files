@@ -23,7 +23,6 @@ author:
 normative:
   RFC2119:
   RFC4506:
-  RFC4949:
   RFC7862:
   RFC7863:
   RFC8174:
@@ -32,7 +31,7 @@ normative:
 
 informative:
   MOUNT:
-    title: mount(2) — mount filesystem
+    title: mount(2) - mount filesystem
     target: https://man7.org/linux/man-pages/man2/mount.2.html
     author:
     - org: Linux man-pages project
@@ -40,7 +39,7 @@ informative:
     seriesinfo:
       Linux: "Programmer's Manual"
   OPEN:
-    title: open(2) — open and possibly create a file
+    title: open(2) - open and possibly create a file
     target: https://man7.org/linux/man-pages/man2/open.2.html
     author:
     - org: Linux man-pages project
@@ -48,20 +47,13 @@ informative:
     seriesinfo:
       Linux: "Programmer's Manual"
   OPEN-O_DIRECT:
-    title: open(2) — Linux system call for opening files (O_DIRECT)
+    title: open(2) - Linux system call for opening files (O_DIRECT)
     target: https://man7.org/linux/man-pages/man2/open.2.html
     author:
     - org: Linux man-pages project
     date: 2024
-  POSIX.1:
-    title: The Open Group Base Specifications Issue 7
-    seriesinfo: IEEE Std 1003.1, 2013 Edition
-    author:
-      org: IEEE
-    date:  2013
-  RFC1813:
   SOLARIS-FORCEDIRECTIO:
-    title: mount -o forcedirectio — Solaris forcedirectio mount option
+    title: mount -o forcedirectio - Solaris forcedirectio mount option
     target: https://docs.oracle.com/en/operating-systems/solaris/oracle-solaris/11.4/manage-nfs/mount-options-for-nfs-file-systems.html
     author:
     - org: Oracle Solaris Documentation
@@ -229,15 +221,19 @@ into a ready-to-compile format. To extract the machine-readable XDR
 description, use the following shell script:
 
 ~~~ shell
+<CODE BEGINS>
 #!/bin/sh
 grep '^ *///' $* | sed 's?^ */// ??' | sed 's?^ *///$??'
+<CODE ENDS>
 ~~~
 
 For example, if the script is named 'extract.sh' and this document is
 named 'spec.txt', execute the following command:
 
 ~~~ shell
+<CODE BEGINS>
 sh extract.sh < spec.txt > uncacheable_prot.x
+<CODE ENDS>
 ~~~
 
 This script removes leading blank spaces and the sentinel sequence '///'
