@@ -48,8 +48,8 @@ The Network File System version 4.2 (NFSv4.2) allows a client to
 cache data for file objects.  Caching file data can lead to performance
 issues if the cache hit rate is low.  This document introduces a
 new uncacheable file data attribute for NFSv4.2.  Files marked as
-uncacheable MUST NOT have their data be stored in client-side caches.
-This document extends NFSv4.2 (see RFC7862).
+uncacheable file data SHOULD NOT have their data be stored in
+client-side caches.  This document extends NFSv4.2 (see RFC7862).
 
 --- note_Note_to_Readers
 
@@ -139,7 +139,10 @@ unpredictable latency, as data is buffered and flushed later.
 ## Uncacheable File Data {#sec_files}
 
 If a file object is marked as uncacheable file data, all modifications
-to the file MUST be immediately sent from the client to the server.
+to the file SHOULD be immediately sent from the client to the server.
+I.e., if a NFSv4.2 client fails to query this attribute, then it
+can not meet the requirements of the attribute.
+
 If the client has a OPEN_DELEGATE_WRITE delegation on the file
 (see Section 10.4 of {{RFC8881}}), then the uncacheable file data
 attribute takes precedence over the caching of file data. The
