@@ -167,6 +167,13 @@ to the file SHOULD be immediately sent from the client to the server.
 I.e., if a NFSv4.2 client fails to query this attribute, then it
 can not meet the requirements of the attribute.
 
+If the fattr4_uncacheable_file_data is not set when a client opens
+a file and is changed whilst the file is open, the client is not
+responsible for bypassing the page cache. It could flush the page
+cache and make all subsequent IO be direct, but until the
+client closes the file and reopens it, it is not required to
+meet the requirements of the attribute.
+
 If the client has a OPEN_DELEGATE_WRITE delegation on the file
 (see Section 10.4 of {{RFC8881}}), then the uncacheable file data
 attribute takes precedence over the caching of file data. The
