@@ -136,10 +136,15 @@ HPC workloads. In general, these involve massive data transfers and
 require extremely low latency.  Write caching can introduce
 unpredictable latency, as data is buffered and flushed later.
 
-## Uncacheable Files {#sec_files}
+## Uncacheable File Data {#sec_files}
 
 If a file object is marked as uncacheable file data, all modifications
 to the file MUST be immediately sent from the client to the server.
+If the client has a OPEN_DELEGATE_WRITE delegation on the file
+(see Section 10.4 of {{RFC8881}}), then the uncacheable file data
+attribute takes precedence over the caching of file data. The
+server can control this by not issuing file delegations for
+files with this attribute.
 
 # XDR for Uncacheable Attribute
 
@@ -198,6 +203,8 @@ This document has no IANA actions.
 
 Trond Myklebust, Mike Snitzer, and Thomas Haynes all worked on the
 prototype at Hammerspace.
+
+Rick Macklem and Dave Noveck reviewed the document.
 
 Chris Inacio, Brian Pawlowski, and Gorry Fairhurst helped guide
 this process.
