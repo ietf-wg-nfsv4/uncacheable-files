@@ -68,7 +68,7 @@ cache data for file objects.  Applications on some clients can
 control the caching of data, but there is no way to achieve this
 at a system level.  This document introduces a new uncacheable file
 data attribute for NFSv4.2.  Files marked as uncacheable file data
-SHOULD NOT have their data be stored in client-side caches.  This
+SHOULD NOT have their data stored in client-side caches.  This
 document extends NFSv4.2 (see RFC7862).
 
 --- note_Note_to_Readers
@@ -94,7 +94,8 @@ delegations for the file contents.
 
 There are prior efforts to bypass file caching.  In Highly Parallel
 Computing (HPC) workloads, file caching is bypassed in order to
-achieve consistent work flows.
+achieve consistent work flows and to allow concurrent access from
+many writers.
 
 Applications can use O_DIRECT on open (see {{OPEN-O_DIRECT}}) to
 force the client to bypass the page cache, but the limitation
