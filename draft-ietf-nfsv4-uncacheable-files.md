@@ -30,6 +30,7 @@ normative:
   RFC8881:
 
 informative:
+  I-D.haynes-nfsv4-flexfiles-v2:
   MOUNT:
     title: mount(2) - mount filesystem
     target: https://man7.org/linux/man-pages/man2/mount.2.html
@@ -135,6 +136,13 @@ file caching
 contents of a regular file. Typical usage would be to accumulate
 changes to be bunched together for writing to the server.
 
+write hole
+
+: A write hole is a data corruption scenario where either two clients
+are trying to write to the same erasure encoded block or one client
+is overwriting an existing erasure encoded block of data. (Adapted
+from {{I-D.haynes-nfsv4-flexfiles-v2}}.)
+
 Further, the definitions of the following terms are referenced as follows:
 
 - COMMIT (({{Section 18.3 of RFC8881}})
@@ -166,6 +174,11 @@ The most pressing need for this feature is in connection with HPC
 workloads. These often involve massive data transfers and require
 extremely low latency. Write-behind caching can introduce unpredictable
 latency, as data is buffered and flushed later.
+
+Another aspect of such workloads is the need to share data between
+multiple writers. As the application data may span a data block
+in a page cache, data needs to be flushed immediately for the
+detection of write holes.
 
 ## Uncacheable File Data {#sec_files}
 
