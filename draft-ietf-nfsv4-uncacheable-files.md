@@ -152,15 +152,20 @@ Further, the definitions of the following terms are referenced as follows:
 # Caching of File Data
 
 The uncacheable file data attribute instructs the client to bypass
-its page cache for the file. This behavior is similar to using the
-O_DIRECT flag with the open call ({{OPEN}}). This can be beneficial
-for files that are not shared or do not exhibit access patterns
-suitable for caching.
+its page cache for the file.  This often includes write-behind
+caching used to combine multiple pending WRITEs into a single
+operation for more efficient remote processing. The uncacheable
+file data attribute, inhibits this behavior with an effect similar
+to the user using the O_DIRECT flag with the open call ({{OPEN}}).
+Under some conditions clients might be able to determine that files
+are not shared or do not exhibit access patterns suitable for
+write-behind caching. In such situations, setting this attribute
+provides a way to inform other clients of this judgment.
 
-However, the real need for bypassing write caching is evident in
-HPC workloads. In general, these involve massive data transfers and
-require extremely low latency.  Write caching can introduce
-unpredictable latency, as data is buffered and flushed later.
+The most pressing need for this feature is in connection with HPC
+workloads. These often involve massive data transfers and require
+extremely low latency. Write-behind caching can introduce unpredictable
+latency, as data is buffered and flushed later.
 
 ## Uncacheable File Data {#sec_files}
 
@@ -198,7 +203,7 @@ The uncacheable file data attribute can allow for applications which
 do not support O_DIRECT to be able to use O_DIRECT semantics.  One
 approach to support this would be to add a new parameter to mount
 {{MOUNT}} that specifies all newly created files under that mount
-point would hsave their data not cacheable. Then the NFSv4.2 client
+point would have their data not cacheable. Then the NFSv4.2 client
 would use a SETATTR to set fattr4_uncacheable_file_data. This
 approach is similar to the Solaris forcedirectio (See
 {{SOLARIS-FORCEDIRECTIO}}) mount option.
