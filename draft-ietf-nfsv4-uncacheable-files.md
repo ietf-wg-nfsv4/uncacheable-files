@@ -121,7 +121,7 @@ the attribute is if the client sends either a GETATTR or SETATTR
 with the uncacheable file data attribute.
 
 As bypassing file caching is file based, it is only applicable for
-dirents which are of type attribute value of NF4REG.
+objects which are of type attribute value of NF4REG.
 
 Using the process detailed in {{RFC8178}}, the revisions in this document
 become an extension of NFSv4.2 {{RFC7862}}. They are built on top of the
