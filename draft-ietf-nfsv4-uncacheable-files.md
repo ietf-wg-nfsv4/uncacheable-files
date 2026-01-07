@@ -105,7 +105,7 @@ is that each application must be modified to use this flag.
 This document introduces the uncacheable file data attribute to
 NFSv4.2 to bypass file caching on the client. As such, it is an
 OPTIONAL attribute to implement for NFSv4.2. However, if both the
-client and the server support this attribute, then the client MUST
+client and the server support this attribute, then the client SHOULD
 follow the semantics of the uncacheable file data attribute.
 
 The uncacheable file data attribute is read-write and per file. The
