@@ -139,9 +139,11 @@ changes to be bunched together for writing to the server.
 write hole
 
 : A write hole is a data corruption scenario where either two clients
-are trying to write to the same erasure encoded block or one client
-is overwriting an existing erasure encoded block of data. (Adapted
-from {{I-D.haynes-nfsv4-flexfiles-v2}}.)
+are trying to write to the same erasure encoded block of dataor one
+client is overwriting an existing erasure encoded block of data.
+(Adapted from {{I-D.haynes-nfsv4-flexfiles-v2}}.) Note the hole
+occurs when multiple data servers are not consistent with the
+encoded block.
 
 Further, the definitions of the following terms are referenced as follows:
 
