@@ -71,13 +71,14 @@ Table of Contents
    2.  Caching of File Data
      2.1.  Uncacheable File Data
    3.  Setting the Uncacheable File Data Attribute
-   4.  XDR for Uncacheable Attribute
-   5.  Extraction of XDR
-   6.  Security Considerations
-   7.  IANA Considerations
-   8.  References
-     8.1.  Normative References
-     8.2.  Informative References
+   4.  Implementation Status
+   5.  XDR for Uncacheable Attribute
+   6.  Extraction of XDR
+   7.  Security Considerations
+   8.  IANA Considerations
+   9.  References
+     9.1.  Normative References
+     9.2.  Informative References
    Acknowledgments
    Author's Address
 
@@ -101,7 +102,7 @@ Table of Contents
    This document introduces the uncacheable file data attribute to
    NFSv4.2 to bypass file caching on the client.  As such, it is an
    OPTIONAL attribute to implement for NFSv4.2.  However, if both the
-   client and the server support this attribute, then the client MUST
+   client and the server support this attribute, then the client SHOULD
    follow the semantics of the uncacheable file data attribute.
 
    The uncacheable file data attribute is read-write and per file.  The
@@ -117,7 +118,7 @@ Table of Contents
    the uncacheable file data attribute.
 
    As bypassing file caching is file based, it is only applicable for
-   dirents which are of type attribute value of NF4REG.
+   objects which are of type attribute value of NF4REG.
 
    Using the process detailed in [RFC8178], the revisions in this
    document become an extension of NFSv4.2 [RFC7862].  They are built on
@@ -133,8 +134,10 @@ Table of Contents
 
    write hole  A write hole is a data corruption scenario where either
       two clients are trying to write to the same erasure encoded block
-      or one client is overwriting an existing erasure encoded block of
-      data.  (Adapted from [I-D.haynes-nfsv4-flexfiles-v2].)
+      of dataor one client is overwriting an existing erasure encoded
+      block of data.  (Adapted from [I-D.haynes-nfsv4-flexfiles-v2].)
+      Note the hole occurs when multiple data servers are not consistent
+      with the encoded block.
 
    Further, the definitions of the following terms are referenced as
    follows:
@@ -225,7 +228,15 @@ Table of Contents
    similar to the Solaris forcedirectio (See [SOLARIS-FORCEDIRECTIO])
    mount option.
 
-4.  XDR for Uncacheable Attribute
+4.  Implementation Status
+
+   There is a prototype Hammerspace server which implements the
+   uncacheable file data attribute and a prototype Linux client which
+   treats the uncacheable file data attribute as meaning use O_DIRECT.
+   For the prototype, all files created under the mount point have the
+   fattr4_uncacheable_file_data set to be true.
+
+5.  XDR for Uncacheable Attribute
 
    ///
    /// typedef bool            fattr4_uncacheable_file_data;
@@ -233,7 +244,7 @@ Table of Contents
    /// const FATTR4_UNCACHEABLE_FILE_DATA       = 87;
    ///
 
-5.  Extraction of XDR
+6.  Extraction of XDR
 
    This document contains the external data representation (XDR)
    [RFC4506] description of the uncacheable file attribute.  The XDR
@@ -266,17 +277,17 @@ Table of Contents
    snippets should be placed in their appropriate sections within the
    existing XDR.
 
-6.  Security Considerations
+7.  Security Considerations
 
    This document imposes no new security considerations to NFSv4.2.
 
-7.  IANA Considerations
+8.  IANA Considerations
 
    This document has no IANA actions.
 
-8.  References
+9.  References
 
-8.1.  Normative References
+9.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -309,7 +320,7 @@ Table of Contents
               DOI 10.17487/RFC8881, August 2020,
               <https://www.rfc-editor.org/rfc/rfc8881>.
 
-8.2.  Informative References
+9.2.  Informative References
 
    [I-D.haynes-nfsv4-flexfiles-v2]
               Haynes, T., "Parallel NFS (pNFS) Flexible File Layout
