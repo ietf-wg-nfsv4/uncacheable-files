@@ -183,26 +183,35 @@ error codes, object types, and attributes as defined in {{RFC8881}}.
 
 # Caching of File Data
 
-The uncacheable file data attribute instructs the client to bypass
-its page cache for the file.  This often includes write-behind
-caching used to combine multiple pending WRITEs into a single
-operation for more efficient remote processing. The uncacheable
-file data attribute, inhibits this behavior with an effect similar
-to the user using the O_DIRECT flag with the open call ({{OPEN}}).
-Under some conditions clients might be able to determine that files
-are not shared or do not exhibit access patterns suitable for
-write-behind caching. In such situations, setting this attribute
-provides a way to inform other clients of this judgment.
+The uncacheable file data attribute advises the client to bypass
+its page cache for a file in certain troublesome cases.  These
+include forms of file data caching such as write-behind caching,
+in which multiple pending WRITEs are combined and transmitted to
+the server at a later time for efficiency.  The uncacheable file
+data attribute inhibits such behavior with an effect similar to
+that of using the O_DIRECT flag with the open call ({{OPEN-O_DIRECT}}).
 
-The most pressing need for this feature is in connection with HPC
-workloads. These often involve massive data transfers and require
-extremely low latency. Write-behind caching can introduce unpredictable
-latency, as data is buffered and flushed later.
+The intent of this attribute is to allow a server or administrator
+to indicate that client-side caching of file data for a particular
+file is unsuitable.  The server is often in a better position than
+individual clients to determine sharing patterns, access behavior,
+or correctness requirements associated with a file.  By exposing
+this information via an attribute, the server can advise clients
+to suppress file data caching in a consistent manner.
 
-Another aspect of such workloads is the need to share data between
-multiple writers. As the application data may span a data block
-in a page cache, data needs to be flushed immediately for the
-detection of write holes.
+One important use case for this attribute arises in connection with
+Highly Parallel Computing (HPC) workloads.  These workloads often
+involve large data transfers and concurrent access by multiple
+clients.  In such environments, client-side caching of file data
+can introduce unpredictable latency or correctness hazards when
+data is buffered and flushed at a later time.
+
+Another aspect of such workloads is the need to support concurrent
+writers to shared files.  When application data spans a data block
+in a client cache, delayed transmission of WRITE data can result
+in clients modifying stale data and overwriting updates written by
+others.  Prompt transmission of WRITE data enables the prompt
+detection of write holes and reduces the risk of data corruption.
 
 ## Uncacheable File Data {#sec_files}
 
