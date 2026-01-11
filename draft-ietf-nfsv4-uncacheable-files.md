@@ -100,14 +100,14 @@ techniques are effective for many workloads, they may be unsuitable
 for workloads that require predictable data visibility or involve
 concurrent modification of shared files by multiple clients.
 
-In some cases, Network File System version 4.2 (NFSv4.2) (See
+In some cases, Network File System version 4.2 (NFSv4.2) (see
 {{RFC7862}})  mechanisms such as file delegations can reduce the
 impact of concurrent access.  However, delegations are not always
 available or effective, particularly for workloads with frequent
 concurrent writers or rapidly changing access patterns.
 
 There have been prior efforts to bypass file data caching in order to
-address these issues.  In Highly Parallel Computing (HPC) workloads,
+address these issues.  In High-Performance Computing (HPC) workloads,
 file data caching is often bypassed to improve predictability and to
 avoid read-modify-write hazards when multiple clients write disjoint
 byte ranges of the same file.
@@ -203,7 +203,7 @@ this information via an attribute, the server can advise clients
 to suppress file data caching in a consistent manner.
 
 One important use case for this attribute arises in connection with
-Highly Parallel Computing (HPC) workloads.  These workloads often
+High-Performance Computing (HPC) workloads.  These workloads often
 involve large data transfers and concurrent access by multiple
 clients.  In such environments, client-side caching of file data
 can introduce unpredictable latency or correctness hazards when
