@@ -122,9 +122,9 @@ and clients.
 This document introduces the uncacheable file data attribute to
 NFSv4.2.  This OPTIONAL attribute allows a server to indicate that
 client-side caching of file data for a particular file is unsuitable.
-When both the client and the server support this attribute, the client
-SHOULD suppress client-side caching of file data for that file, in
-accordance with the semantics defined in this document.
+When both the client and the server support this attribute, the
+client is advised suppress client-side caching of file data for
+that file, in accordance with the semantics defined in this document.
 
 The uncacheable file data attribute is read-write, applies on a
 per-file basis, and has a data type of boolean.
