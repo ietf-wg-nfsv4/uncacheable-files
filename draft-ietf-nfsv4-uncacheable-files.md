@@ -215,48 +215,53 @@ detection of write holes and reduces the risk of data corruption.
 
 ## Uncacheable File Data {#sec_files}
 
-If a file object is marked as uncacheable file data, all modifications
-to the file SHOULD be immediately sent from the client to the server.
-I.e., if a NFSv4.2 client fails to query this attribute, then it
-can not meet the requirements of the attribute.
+When a file object is marked as uncacheable file data, the attribute
+advises the client that client-side caching of file data for the
+file is unsuitable.  In particular, the client is advised to transmit
+modifications to the file promptly rather than retaining them in a
+local data cache.  Note that a client that does not query this
+attribute cannot be expected to observe the behavior described in
+this section.
 
-For uncacheable data, the client MUST NOT retain file data in its
-local data cache for the purpose of satisfying subsequent READ
-requests or delaying transmission of WRITE data. Reads MUST bypass
-the client data cache, and WRITE data MUST NOT be retained for
-read-after-write satisfaction or for the purpose of combining
-multiple WRITE requests.
+For uncacheable file data, the client is advised not to retain file
+data in its local data cache for the purpose of satisfying subsequent
+READ requests or delaying transmission of WRITE data.  In such
+cases, READ operations bypass the client data cache, and WRITE data
+is not retained for read-after-write satisfaction or for the purpose
+of combining multiple WRITE requests.
 
-Caching of UNSTABLE WRITE data required to support the NFSv4.2
-COMMIT operation is permitted and unaffected by this requirement.
+Caching of unstably written data used to reissue WRITEs lost because
+of server failure prior to COMMIT is not affected by the advice
+provided by the uncacheable file data attribute.  This is because
+the server is made aware of the WRITE operation without the sort
+of delays introduced by write-behind caching.
 
-Suppression of read caching is required in addition to suppression
-of write caching to prevent stale-data overwrite in multi-writer
-workloads. If a client retains cached READ data for a file while
-other clients are concurrently modifying disjoint byte ranges, the
-client may perform a read-modify-write operation using stale data,
-thereby overwriting updates written by other clients. This hazard
-exists even when WRITE operations are transmitted immediately to
-the server and no write-behind caching is performed.
+Suppressing read caching in addition to suppressing write-behind
+caching reduces the risk of stale-data overwrite in multi-writer
+workloads.  If a client retains cached READ data while other clients
+concurrently modify disjoint byte ranges of the same file, the
+client may perform a read-modify-write operation using stale data
+and overwrite updates written by others.  This risk exists even
+when WRITE operations are transmitted promptly.
 
-Disabling READ caching ensures that clients observe the most recent
-data prior to modification and avoids read-modify-write hazards for
-shared files. This behavior is consistent with direct I/O semantics
-such as those provided by the O_DIRECT flag in Linux and the
-directio/forcedirectio mechanisms in Solaris.
+Disabling READ caching allows clients to observe the most recent
+data prior to modification and reduces read-modify-write hazards
+for shared files.  This behavior is consistent with direct I/O
+semantics such as those provided by the O_DIRECT flag in Linux and
+the directio/forcedirectio mechanisms in Solaris.
 
-If the fattr4_uncacheable_file_data is not set when a client opens
-a file and is changed whilst the file is open, the client is not
-responsible for bypassing the page cache. It could flush the page
-cache and make all subsequent IO be direct, but until the
-client closes the file and reopens it, it is not required to
-meet the requirements of the attribute.
+If the fattr4_uncacheable_file_data attribute is not set when a
+file is opened and is changed while the file is open, the client
+is not expected to retroactively alter its caching behavior.  A
+client may choose to flush cached data and apply the advice to
+subsequent I/O, but such behavior is not required until the file
+is closed and reopened.
 
-If the client has a OPEN_DELEGATE_WRITE delegation on the file
-(see Section 10.4 of {{RFC8881}}), then the uncacheable file data
-attribute takes precedence over the caching of file data. The
-server can control this by not issuing file delegations for
-files with this attribute.
+The presence of the uncacheable file data attribute does not
+invalidate file delegations.  A server that wishes to ensure prompt
+client I/O may choose not to issue write delegations for files
+marked as uncacheable, but clients are not required to suppress
+delegations solely due to the presence of this attribute.
 
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
