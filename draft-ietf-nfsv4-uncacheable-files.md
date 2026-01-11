@@ -199,6 +199,21 @@ multiple WRITE requests.
 Caching of UNSTABLE WRITE data required to support the NFSv4.2
 COMMIT operation is permitted and unaffected by this requirement.
 
+Suppression of read caching is required in addition to suppression
+of write caching to prevent stale-data overwrite in multi-writer
+workloads. If a client retains cached READ data for a file while
+other clients are concurrently modifying disjoint byte ranges, the
+client may perform a read-modify-write operation using stale data,
+thereby overwriting updates written by other clients. This hazard
+exists even when WRITE operations are transmitted immediately to
+the server and no write-behind caching is performed.
+
+Disabling READ caching ensures that clients observe the most recent
+data prior to modification and avoids read-modify-write hazards for
+shared files. This behavior is consistent with direct I/O semantics
+such as those provided by the O_DIRECT flag in Linux and the
+directio/forcedirectio mechanisms in Solaris.
+
 If the fattr4_uncacheable_file_data is not set when a client opens
 a file and is changed whilst the file is open, the client is not
 responsible for bypassing the page cache. It could flush the page
