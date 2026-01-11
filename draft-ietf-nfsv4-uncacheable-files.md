@@ -362,7 +362,9 @@ should be placed in their appropriate sections within the existing XDR.
 
 # Security Considerations
 
-This document imposes no new security considerations to NFSv4.2.
+The attribute does not introduce new authorization mechanisms or
+alter existing access control semantics; existing NFSv4.2 security
+mechanisms continue to apply.
 
 # IANA Considerations
 
