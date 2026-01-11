@@ -136,8 +136,11 @@ supported for a given file by issuing a GETATTR request and examining
 the returned attribute list.
 
 The uncacheable file data attribute applies only to regular files
-(NF4REG).  Attempts to query or set this attribute on objects of other
-types MUST result in an error of NFS4ERR_INVAL.
+(NF4REG).  Attempts to query or set this attribute on objects of
+other types MUST result in an error of NFS4ERR_INVAL. Since the
+uncacheable file data attribute applies only to regular files,
+attempts to apply it to other object types represent an invalid use
+of the attribute.
 
 Using the process described in {{RFC8178}}, the revisions in this
 document extend NFSv4.2 {{RFC7862}}.  They are built on top of the
