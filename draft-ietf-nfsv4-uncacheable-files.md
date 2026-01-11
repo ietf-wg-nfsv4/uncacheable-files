@@ -216,6 +216,14 @@ in clients modifying stale data and overwriting updates written by
 others.  Prompt transmission of WRITE data enables the prompt
 detection of write holes and reduces the risk of data corruption.
 
+## Non-Goals
+
+This attribute does not require clients to provide strict coherency,
+does not replace existing NFS cache consistency mechanisms, and
+does not mandate any specific client implementation strategy.  It
+provides advisory guidance intended to reduce latency and correctness
+risks in selected workloads.
+
 ## Uncacheable File Data {#sec_files}
 
 When a file object is marked as uncacheable file data, the attribute
