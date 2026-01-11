@@ -265,14 +265,35 @@ delegations solely due to the presence of this attribute.
 
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
-The uncacheable file data attribute can allow for applications which
-do not support O_DIRECT to be able to use O_DIRECT semantics.  One
-approach to support this would be to add a new parameter to mount
-{{MOUNT}} that specifies all newly created files under that mount
-point would have their data not cacheable. Then the NFSv4.2 client
-would use a SETATTR to set fattr4_uncacheable_file_data. This
-approach is similar to the Solaris forcedirectio (See
-{{SOLARIS-FORCEDIRECTIO}}) mount option.
+The uncacheable file data attribute provides a mechanism by which
+applications that do not support O_DIRECT can request DIRECT-I/O-like
+semantics for file access.  In particular, the attribute allows a
+server to advise clients that client-side caching of file data for
+a file is unsuitable, including both read caching and write-behind
+caching.
+
+Suppressing read caching is necessary in addition to suppressing
+write-behind caching to avoid read-modify-write hazards in multi-writer
+workloads.  If clients retain cached READ data while other clients
+concurrently modify disjoint byte ranges of the same file, stale
+cached data may be merged with new WRITE data and overwrite updates
+written by others.  This risk exists even when WRITE data is
+transmitted promptly and is not addressed by suppressing write-behind
+caching alone.
+
+One possible deployment model is for a server or administrator to
+configure a mount option such that newly created files under a given
+export are marked as uncacheable file data.  In such a configuration,
+the NFSv4.2 client could use SETATTR to set the
+fattr4_uncacheable_file_data attribute at file creation time.
+
+This approach is conceptually similar to the Solaris forcedirectio
+mount option (see {{SOLARIS-FORCEDIRECTIO}}) in that it allows
+DIRECT-I/O-like behavior to be applied without requiring changes
+to individual applications.  However, unlike the Solaris option,
+the NFSv4.2 attribute is visible to all clients accessing the file
+and is intended to convey server-side knowledge or policy in a
+distributed environment.
 
 # Implementation Status
 
