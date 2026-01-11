@@ -158,7 +158,7 @@ direct I/O
 
 : An access mode in which file data is transferred between application
   buffers and the underlying storage without populating or consulting
-  the client’s file data cache.  Direct I/O suppresses both read caching
+  the client's file data cache.  Direct I/O suppresses both read caching
   and write-behind caching of file data.
 
 write hole
