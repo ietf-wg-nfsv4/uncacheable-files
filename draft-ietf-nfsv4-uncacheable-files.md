@@ -64,13 +64,17 @@ informative:
 
 --- abstract
 
-The Network File System version 4.2 (NFSv4.2) allows a client to
-cache data for file objects.  Applications on some clients can
-control the caching of data, but there is no way to achieve this
-at a system level.  This document introduces a new uncacheable file
-data attribute for NFSv4.2.  Files marked as uncacheable file data
-SHOULD NOT have their data stored in client-side caches.  This
-document extends NFSv4.2 (see RFC7862).
+Network File System version 4.2 (NFSv4.2) clients commonly cache
+file data in order to improve performance. On some systems,
+applications may influence client data caching behavior, but there
+is no standardized mechanism for a server or administrator to
+indicate that particular file data should not be cached by clients
+for reasons of performance or correctness. This document introduces
+a new file data caching attribute for NFSv4.2. Files marked with
+this attribute are intended to be accessed with client-side caching
+of file data suppressed, in order to support workloads that require
+predictable data visibility. This document extends NFSv4.2 (see
+RFC7862).
 
 --- note_Note_to_Readers
 
