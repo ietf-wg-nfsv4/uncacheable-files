@@ -39,14 +39,6 @@ informative:
     date: 2024
     seriesinfo:
       Linux: "Programmer's Manual"
-  OPEN:
-    title: open(2) - open and possibly create a file
-    target: https://man7.org/linux/man-pages/man2/open.2.html
-    author:
-    - org: Linux man-pages project
-    date: 2024
-    seriesinfo:
-      Linux: "Programmer's Manual"
   OPEN-O_DIRECT:
     title: open(2) - Linux system call for opening files (O_DIRECT)
     target: https://man7.org/linux/man-pages/man2/open.2.html
@@ -294,10 +286,10 @@ transmitted promptly and is not addressed by suppressing write-behind
 caching alone.
 
 One possible deployment model is for a server or administrator to
-configure a mount option such that newly created files under a given
-export are marked as uncacheable file data.  In such a configuration,
-the NFSv4.2 client could use SETATTR to set the
-fattr4_uncacheable_file_data attribute at file creation time.
+configure a mount (see {{MOUNT}}) option such that newly created
+files under a given export are marked as uncacheable file data.  In
+such a configuration, the NFSv4.2 client could use SETATTR to set
+the fattr4_uncacheable_file_data attribute at file creation time.
 
 This approach is conceptually similar int intent to the Solaris forcedirectio
 mount option (see {{SOLARIS-FORCEDIRECTIO}}), but differs in scope
