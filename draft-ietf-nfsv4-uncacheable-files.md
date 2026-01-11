@@ -310,9 +310,9 @@ distributed environment.
 
 There is a prototype Hammerspace server which implements the
 uncacheable file data attribute and a prototype Linux client which
-treats the uncacheable file data attribute as meaning use O_DIRECT.
-For the prototype, all files created under the mount point have the
-fattr4_uncacheable_file_data set to be true.
+treats the uncacheable file data attribute as an indication to use
+O_DIRECT.  For the prototype, all files created under the mount
+point have the fattr4_uncacheable_file_data set to be true.
 
 # XDR for Uncacheable Attribute
 
