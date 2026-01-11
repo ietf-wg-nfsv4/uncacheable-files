@@ -64,17 +64,17 @@ informative:
 
 --- abstract
 
-Network File System version 4.2 (NFSv4.2) clients commonly cache
-file data in order to improve performance. On some systems,
-applications may influence client data caching behavior, but there
-is no standardized mechanism for a server or administrator to
-indicate that particular file data should not be cached by clients
-for reasons of performance or correctness. This document introduces
-a new file data caching attribute for NFSv4.2. Files marked with
-this attribute are intended to be accessed with client-side caching
-of file data suppressed, in order to support workloads that require
-predictable data visibility. This document extends NFSv4.2 (see
-RFC7862).
+Network File System version 4.2 (NFSv4.2) clients commonly perform
+client-side caching of file data in order to improve performance.
+On some systems, applications may influence client data caching
+behavior, but there is no standardized mechanism for a server or
+administrator to indicate that particular file data should not be
+cached by clients for reasons of performance or correctness. This
+document introduces a new file data caching attribute for NFSv4.2.
+Files marked with this attribute are intended to be accessed with
+client-side caching of file data suppressed, in order to support
+workloads that require predictable data visibility. This document
+extends NFSv4.2 (see RFC7862).
 
 --- note_Note_to_Readers
 
@@ -91,14 +91,15 @@ Working Group information can be found at [](https://github.com/ietf-wg-nfsv4).
 
 # Introduction
 
-Clients of remote filesystems commonly cache file data in order to
-improve performance.  Such caching may include retaining data read
-from the server to satisfy subsequent READ requests, as well as
-retaining data written by applications in order to delay or combine
-WRITE requests before transmitting them to the server.  While these
-techniques are effective for many workloads, they may be unsuitable
-for workloads that require predictable data visibility or involve
-concurrent modification of shared files by multiple clients.
+Clients of remote filesystems commonly perform client-side caching
+of file dat in order to improve performance.  Such caching may
+include retaining data read from the server to satisfy subsequent
+READ requests, as well as retaining data written by applications
+in order to delay or combine WRITE requests before transmitting
+them to the server.  While these techniques are effective for many
+workloads, they may be unsuitable for workloads that require
+predictable data visibility or involve concurrent modification of
+shared files by multiple clients.
 
 In some cases, Network File System version 4.2 (NFSv4.2) (see
 {{RFC7862}})  mechanisms such as file delegations can reduce the
@@ -149,7 +150,7 @@ external data representation (XDR) {{RFC4506}} generated from
 
 ## Definitions
 
-file data caching
+client-side caching of file data
 
 : The retention of file data by a client in a local data cache, commonly
   referred to as the page cache, for the purpose of satisfying subsequent
@@ -184,13 +185,13 @@ error codes, object types, and attributes as defined in {{RFC8881}}.
 
 {::boilerplate bcp14-tagged}
 
-# Caching of File Data
+# Client-Side Caching of File Data
 
 The uncacheable file data attribute advises the client to bypass
 its page cache for a file in certain troublesome cases.  These
-include forms of file data caching such as write-behind caching,
-in which multiple pending WRITEs are combined and transmitted to
-the server at a later time for efficiency.  The uncacheable file
+include forms of client-side caching of file data such as write-behind
+caching, in which multiple pending WRITEs are combined and transmitted
+to the server at a later time for efficiency.  The uncacheable file
 data attribute inhibits such behavior with an effect similar to
 that of using the O_DIRECT flag with the open call ({{OPEN-O_DIRECT}}).
 
