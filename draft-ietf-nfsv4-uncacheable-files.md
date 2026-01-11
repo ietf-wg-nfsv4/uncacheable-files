@@ -298,13 +298,13 @@ export are marked as uncacheable file data.  In such a configuration,
 the NFSv4.2 client could use SETATTR to set the
 fattr4_uncacheable_file_data attribute at file creation time.
 
-This approach is conceptually similar to the Solaris forcedirectio
-mount option (see {{SOLARIS-FORCEDIRECTIO}}) in that it allows
-DIRECT-I/O-like behavior to be applied without requiring changes
-to individual applications.  However, unlike the Solaris option,
-the NFSv4.2 attribute is visible to all clients accessing the file
-and is intended to convey server-side knowledge or policy in a
-distributed environment.
+This approach is conceptually similar int intent to the Solaris forcedirectio
+mount option (see {{SOLARIS-FORCEDIRECTIO}}), but differs in scope
+and visibility in that it allows DIRECT-I/O-like behavior to be
+applied without requiring changes to individual applications.
+However, unlike the Solaris option, the NFSv4.2 attribute is visible
+to all clients accessing the file and is intended to convey server-side
+knowledge or policy in a distributed environment.
 
 # Implementation Status
 
