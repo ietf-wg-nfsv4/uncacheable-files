@@ -146,30 +146,36 @@ external data representation (XDR) {{RFC4506}} generated from
 
 ## Definitions
 
-file caching
+file data caching
 
-: A client cache, normally called the page cache, which caches the
-contents of a regular file. Typical usage would be to accumulate
-changes to be bunched together for writing to the server.
+: The retention of file data by a client in a local data cache, commonly
+  referred to as the page cache, for the purpose of satisfying subsequent
+  READ requests or delaying transmission of WRITE data to the server.
+
+write-behind caching
+
+: A form of file data caching in which WRITE data is retained by the
+  client and transmission of the data to the server is delayed in order
+  to combine multiple WRITE operations or improve efficiency.
+
+direct I/O
+
+: An access mode in which file data is transferred between application
+  buffers and the underlying storage without populating or consulting
+  the client’s file data cache.  Direct I/O suppresses both read caching
+  and write-behind caching of file data.
 
 write hole
 
-: A write hole is a data corruption scenario where either two clients
-are trying to write to the same erasure encoded block of dataor one
-client is overwriting an existing erasure encoded block of data.
-(Adapted from {{I-D.haynes-nfsv4-flexfiles-v2}}.) Note the hole
-occurs when multiple data servers are not consistent with the
-encoded block.
+: A write hole is an instance of data corruption that arises when
+  multiple clients modify disjoint byte ranges within the same encoded
+  data block without having a consistent view of the existing contents.
+  This can result in stale data overwriting newer updates, particularly
+  in environments that use erasure encoding or striped storage.
+  (Adapted from {{I-D.haynes-nfsv4-flexfiles-v2}}.)
 
-Further, the definitions of the following terms are referenced as follows:
-
-- COMMIT (({{Section 18.3 of RFC8881}})
-- file delegations ({{Section 10.2 of RFC8881}})
-- GETATTR ({{Section 18.7 of RFC8881}})
-- NF4REG ({{Section 5.8.1.2 of RFC8881}})
-- NFS4ERR_ATTRNOTSUPP ({{Section 15.1.15.1 of RFC8881}})
-- SETATTR ({{Section 18.30 of RFC8881}})
-- system ({{Section 5.8.2.36 of RFC8881}})
+This document assumes familiarity with the NFSv4 protocol operations,
+error codes, object types, and attributes as defined in {{RFC8881}}.
 
 ## Requirements Language
 
