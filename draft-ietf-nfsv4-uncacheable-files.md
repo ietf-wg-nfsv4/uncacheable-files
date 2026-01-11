@@ -91,44 +91,56 @@ Working Group information can be found at [](https://github.com/ietf-wg-nfsv4).
 
 # Introduction
 
-With a remote filesystem, the client typically caches file contents
-in order to improve performance.  Several assumptions are made about
-the rate of change in the number of clients trying to concurrently
-access a file.  With NFSv4.2, this could be mitigated by file
-delegations for the file contents.
+Clients of remote filesystems commonly cache file data in order to
+improve performance.  Such caching may include retaining data read
+from the server to satisfy subsequent READ requests, as well as
+retaining data written by applications in order to delay or combine
+WRITE requests before transmitting them to the server.  While these
+techniques are effective for many workloads, they may be unsuitable
+for workloads that require predictable data visibility or involve
+concurrent modification of shared files by multiple clients.
 
-There are prior efforts to bypass file caching.  In Highly Parallel
-Computing (HPC) workloads, file caching is bypassed in order to
-achieve consistent work flows and to allow concurrent access from
-many writers.
+In some cases, Network File System version 4.2 (NFSv4.2) (See
+{{RFC7862}})  mechanisms such as file delegations can reduce the
+impact of concurrent access.  However, delegations are not always
+available or effective, particularly for workloads with frequent
+concurrent writers or rapidly changing access patterns.
 
-Applications can use O_DIRECT on open (see {{OPEN-O_DIRECT}}) to
-force the client to bypass the page cache, but the limitation
-is that each application must be modified to use this flag.
+There have been prior efforts to bypass file data caching in order to
+address these issues.  In Highly Parallel Computing (HPC) workloads,
+file data caching is often bypassed to improve predictability and to
+avoid read-modify-write hazards when multiple clients write disjoint
+byte ranges of the same file.
+
+Applications on some systems can request bypass of the client data
+cache by opening files with the O_DIRECT flag (see {{OPEN-O_DIRECT}}).
+However, this approach has limitations, including the requirement
+that each application be explicitly modified and the lack of a
+standardized mechanism for communicating this intent between servers
+and clients.
 
 This document introduces the uncacheable file data attribute to
-NFSv4.2 to bypass file caching on the client. As such, it is an
-OPTIONAL attribute to implement for NFSv4.2. However, if both the
-client and the server support this attribute, then the client SHOULD
-follow the semantics of the uncacheable file data attribute.
+NFSv4.2.  This OPTIONAL attribute allows a server to indicate that
+client-side caching of file data for a particular file is unsuitable.
+When both the client and the server support this attribute, the client
+SHOULD suppress client-side caching of file data for that file, in
+accordance with the semantics defined in this document.
 
-The uncacheable file data attribute is read-write and per file. The
-data type is bool.
+The uncacheable file data attribute is read-write, applies on a
+per-file basis, and has a data type of boolean.
 
-A client can easily determine whether or not a server supports the
-uncacheable file data attribute with a simple GETATTR on any file.
-If the server does not support the uncacheable file data attribute,
-it will return an error of NFS4ERR_ATTRNOTSUPP.
+Support for the uncacheable file data attribute is specific to the
+exported filesystem and may differ between filesystems served by the
+same server.  A client can determine whether the attribute is
+supported for a given file by issuing a GETATTR request and examining
+the returned attribute list.
 
-The only way that the server can determine that the client supports
-the attribute is if the client sends either a GETATTR or SETATTR
-with the uncacheable file data attribute.
+The uncacheable file data attribute applies only to regular files
+(NF4REG).  Attempts to query or set this attribute on objects of other
+types MUST result in an error of NFS4ERR_INVAL.
 
-As bypassing file caching is file based, it is only applicable for
-objects which are of type attribute value of NF4REG.
-
-Using the process detailed in {{RFC8178}}, the revisions in this document
-become an extension of NFSv4.2 {{RFC7862}}. They are built on top of the
+Using the process described in {{RFC8178}}, the revisions in this
+document extend NFSv4.2 {{RFC7862}}.  They are built on top of the
 external data representation (XDR) {{RFC4506}} generated from
 {{RFC7863}}.
 
