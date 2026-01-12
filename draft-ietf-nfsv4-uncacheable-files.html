@@ -7,17 +7,17 @@
 <title>Adding an Uncacheable File Data Attribute to NFSv4.2</title>
 <meta content="Thomas Haynes" name="author">
 <meta content="
-       Network File System version 4.2 (NFSv4.2) clients commonly cache
-file data in order to improve performance. On some systems,
-applications may influence client data caching behavior, but there
-is no standardized mechanism for a server or administrator to
-indicate that particular file data should not be cached by clients
-for reasons of performance or correctness. This document introduces
-a new file data caching attribute for NFSv4.2. Files marked with
-this attribute are intended to be accessed with client-side caching
-of file data suppressed, in order to support workloads that require
-predictable data visibility. This document extends NFSv4.2 (see
-RFC7862). 
+       Network File System version 4.2 (NFSv4.2) clients commonly perform
+client-side caching of file data in order to improve performance.
+On some systems, applications may influence client data caching
+behavior, but there is no standardized mechanism for a server or
+administrator to indicate that particular file data should not be
+cached by clients for reasons of performance or correctness. This
+document introduces a new file data caching attribute for NFSv4.2.
+Files marked with this attribute are intended to be accessed with
+client-side caching of file data suppressed, in order to support
+workloads that require predictable data visibility. This document
+extends NFSv4.2 (see RFC7862). 
     " name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Haynes</td>
-<td class="center">Expires 15 July 2026</td>
+<td class="center">Expires 16 July 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1070,12 +1070,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-nfsv4-uncacheable-files-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-01-11" class="published">11 January 2026</time>
+<time datetime="2026-01-12" class="published">12 January 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-07-15">15 July 2026</time></dd>
+<dd class="expires"><time datetime="2026-07-16">16 July 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1088,17 +1088,17 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <h1 id="title">Adding an Uncacheable File Data Attribute to NFSv4.2</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Network File System version 4.2 (NFSv4.2) clients commonly cache
-file data in order to improve performance. On some systems,
-applications may influence client data caching behavior, but there
-is no standardized mechanism for a server or administrator to
-indicate that particular file data should not be cached by clients
-for reasons of performance or correctness. This document introduces
-a new file data caching attribute for NFSv4.2. Files marked with
-this attribute are intended to be accessed with client-side caching
-of file data suppressed, in order to support workloads that require
-predictable data visibility. This document extends NFSv4.2 (see
-RFC7862).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">Network File System version 4.2 (NFSv4.2) clients commonly perform
+client-side caching of file data in order to improve performance.
+On some systems, applications may influence client data caching
+behavior, but there is no standardized mechanism for a server or
+administrator to indicate that particular file data should not be
+cached by clients for reasons of performance or correctness. This
+document introduces a new file data caching attribute for NFSv4.2.
+Files marked with this attribute are intended to be accessed with
+client-side caching of file data suppressed, in order to support
+workloads that require predictable data visibility. This document
+extends NFSv4.2 (see RFC7862).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note" id="section-note.1">
       <h2 id="name-note-to-readers">
@@ -1131,7 +1131,7 @@ code and issues list for this draft can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 15 July 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 16 July 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1172,10 +1172,13 @@ code and issues list for this draft can be found at
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-caching-of-file-data" class="internal xref">Caching of File Data</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-client-side-caching-of-file" class="internal xref">Client-Side Caching of File Data</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-uncacheable-file-data" class="internal xref">Uncacheable File Data</a></p>
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-non-goals" class="internal xref">Non-Goals</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-uncacheable-file-data" class="internal xref">Uncacheable File Data</a></p>
 </li>
             </ul>
 </li>
@@ -1223,21 +1226,22 @@ code and issues list for this draft can be found at
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Clients of remote filesystems commonly cache file data in order to
-improve performance.  Such caching may include retaining data read
-from the server to satisfy subsequent READ requests, as well as
-retaining data written by applications in order to delay or combine
-WRITE requests before transmitting them to the server.  While these
-techniques are effective for many workloads, they may be unsuitable
-for workloads that require predictable data visibility or involve
-concurrent modification of shared files by multiple clients.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">In some cases, Network File System version 4.2 (NFSv4.2) (See
+<p id="section-1-1">Clients of remote filesystems commonly perform client-side caching
+of file dat in order to improve performance.  Such caching may
+include retaining data read from the server to satisfy subsequent
+READ requests, as well as retaining data written by applications
+in order to delay or combine WRITE requests before transmitting
+them to the server.  While these techniques are effective for many
+workloads, they may be unsuitable for workloads that require
+predictable data visibility or involve concurrent modification of
+shared files by multiple clients.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">In some cases, Network File System version 4.2 (NFSv4.2) (see
 <span>[<a href="#RFC7862" class="cite xref">RFC7862</a>]</span>)  mechanisms such as file delegations can reduce the
 impact of concurrent access.  However, delegations are not always
 available or effective, particularly for workloads with frequent
 concurrent writers or rapidly changing access patterns.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">There have been prior efforts to bypass file data caching in order to
-address these issues.  In Highly Parallel Computing (HPC) workloads,
+address these issues.  In High-Performance Computing (HPC) workloads,
 file data caching is often bypassed to improve predictability and to
 avoid read-modify-write hazards when multiple clients write disjoint
 byte ranges of the same file.<a href="#section-1-3" class="pilcrow">¶</a></p>
@@ -1250,9 +1254,9 @@ and clients.<a href="#section-1-4" class="pilcrow">¶</a></p>
 <p id="section-1-5">This document introduces the uncacheable file data attribute to
 NFSv4.2.  This <span class="bcp14">OPTIONAL</span> attribute allows a server to indicate that
 client-side caching of file data for a particular file is unsuitable.
-When both the client and the server support this attribute, the client
-<span class="bcp14">SHOULD</span> suppress client-side caching of file data for that file, in
-accordance with the semantics defined in this document.<a href="#section-1-5" class="pilcrow">¶</a></p>
+When both the client and the server support this attribute, the
+client is advised suppress client-side caching of file data for
+that file, in accordance with the semantics defined in this document.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <p id="section-1-6">The uncacheable file data attribute is read-write, applies on a
 per-file basis, and has a data type of boolean.<a href="#section-1-6" class="pilcrow">¶</a></p>
 <p id="section-1-7">Support for the uncacheable file data attribute is specific to the
@@ -1261,8 +1265,11 @@ same server.  A client can determine whether the attribute is
 supported for a given file by issuing a GETATTR request and examining
 the returned attribute list.<a href="#section-1-7" class="pilcrow">¶</a></p>
 <p id="section-1-8">The uncacheable file data attribute applies only to regular files
-(NF4REG).  Attempts to query or set this attribute on objects of other
-types <span class="bcp14">MUST</span> result in an error of NFS4ERR_INVAL.<a href="#section-1-8" class="pilcrow">¶</a></p>
+(NF4REG).  Attempts to query or set this attribute on objects of
+other types <span class="bcp14">MUST</span> result in an error of NFS4ERR_INVAL. Since the
+uncacheable file data attribute applies only to regular files,
+attempts to apply it to other object types represent an invalid use
+of the attribute.<a href="#section-1-8" class="pilcrow">¶</a></p>
 <p id="section-1-9">Using the process described in <span>[<a href="#RFC8178" class="cite xref">RFC8178</a>]</span>, the revisions in this
 document extend NFSv4.2 <span>[<a href="#RFC7862" class="cite xref">RFC7862</a>]</span>.  They are built on top of the
 external data representation (XDR) <span>[<a href="#RFC4506" class="cite xref">RFC4506</a>]</span> generated from
@@ -1273,7 +1280,7 @@ external data representation (XDR) <span>[<a href="#RFC4506" class="cite xref">R
 <a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-definitions" class="section-name selfRef">Definitions</a>
         </h3>
 <span class="break"></span><dl class="dlParallel" id="section-1.1-1">
-          <dt id="section-1.1-1.1">file data caching</dt>
+          <dt id="section-1.1-1.1">client-side caching of file data</dt>
           <dd style="margin-left: 1.5em" id="section-1.1-1.2">
             <p id="section-1.1-1.2.1">The retention of file data by a client in a local data cache, commonly
 referred to as the page cache, for the purpose of satisfying subsequent
@@ -1291,7 +1298,7 @@ to combine multiple WRITE operations or improve efficiency.<a href="#section-1.1
           <dd style="margin-left: 1.5em" id="section-1.1-1.6">
             <p id="section-1.1-1.6.1">An access mode in which file data is transferred between application
 buffers and the underlying storage without populating or consulting
-the client’s file data cache.  Direct I/O suppresses both read caching
+the client's file data cache.  Direct I/O suppresses both read caching
 and write-behind caching of file data.<a href="#section-1.1-1.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
@@ -1323,16 +1330,16 @@ appear in all capitals, as shown here.<a href="#section-1.2-1" class="pilcrow">�
 </div>
 </section>
 </div>
-<div id="caching-of-file-data">
+<div id="client-side-caching-of-file-data">
 <section id="section-2">
-      <h2 id="name-caching-of-file-data">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-caching-of-file-data" class="section-name selfRef">Caching of File Data</a>
+      <h2 id="name-client-side-caching-of-file">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-client-side-caching-of-file" class="section-name selfRef">Client-Side Caching of File Data</a>
       </h2>
 <p id="section-2-1">The uncacheable file data attribute advises the client to bypass
 its page cache for a file in certain troublesome cases.  These
-include forms of file data caching such as write-behind caching,
-in which multiple pending WRITEs are combined and transmitted to
-the server at a later time for efficiency.  The uncacheable file
+include forms of client-side caching of file data such as write-behind
+caching, in which multiple pending WRITEs are combined and transmitted
+to the server at a later time for efficiency.  The uncacheable file
 data attribute inhibits such behavior with an effect similar to
 that of using the O_DIRECT flag with the open call (<span>[<a href="#OPEN-O_DIRECT" class="cite xref">OPEN-O_DIRECT</a>]</span>).<a href="#section-2-1" class="pilcrow">¶</a></p>
 <p id="section-2-2">The intent of this attribute is to allow a server or administrator
@@ -1343,7 +1350,7 @@ or correctness requirements associated with a file.  By exposing
 this information via an attribute, the server can advise clients
 to suppress file data caching in a consistent manner.<a href="#section-2-2" class="pilcrow">¶</a></p>
 <p id="section-2-3">One important use case for this attribute arises in connection with
-Highly Parallel Computing (HPC) workloads.  These workloads often
+High-Performance Computing (HPC) workloads.  These workloads often
 involve large data transfers and concurrent access by multiple
 clients.  In such environments, client-side caching of file data
 can introduce unpredictable latency or correctness hazards when
@@ -1354,52 +1361,64 @@ in a client cache, delayed transmission of WRITE data can result
 in clients modifying stale data and overwriting updates written by
 others.  Prompt transmission of WRITE data enables the prompt
 detection of write holes and reduces the risk of data corruption.<a href="#section-2-4" class="pilcrow">¶</a></p>
-<div id="sec_files">
+<div id="non-goals">
 <section id="section-2.1">
-        <h3 id="name-uncacheable-file-data">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-uncacheable-file-data" class="section-name selfRef">Uncacheable File Data</a>
+        <h3 id="name-non-goals">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-non-goals" class="section-name selfRef">Non-Goals</a>
         </h3>
-<p id="section-2.1-1">When a file object is marked as uncacheable file data, the attribute
+<p id="section-2.1-1">This attribute does not require clients to provide strict coherency,
+does not replace existing NFS cache consistency mechanisms, and
+does not mandate any specific client implementation strategy.  It
+provides advisory guidance intended to reduce latency and correctness
+risks in selected workloads.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec_files">
+<section id="section-2.2">
+        <h3 id="name-uncacheable-file-data">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-uncacheable-file-data" class="section-name selfRef">Uncacheable File Data</a>
+        </h3>
+<p id="section-2.2-1">When a file object is marked as uncacheable file data, the attribute
 advises the client that client-side caching of file data for the
 file is unsuitable.  In particular, the client is advised to transmit
 modifications to the file promptly rather than retaining them in a
 local data cache.  Note that a client that does not query this
 attribute cannot be expected to observe the behavior described in
-this section.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<p id="section-2.1-2">For uncacheable file data, the client is advised not to retain file
+this section.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-2">For uncacheable file data, the client is advised not to retain file
 data in its local data cache for the purpose of satisfying subsequent
 READ requests or delaying transmission of WRITE data.  In such
 cases, READ operations bypass the client data cache, and WRITE data
 is not retained for read-after-write satisfaction or for the purpose
-of combining multiple WRITE requests.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
-<p id="section-2.1-3">Caching of unstably written data used to reissue WRITEs lost because
+of combining multiple WRITE requests.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
+<p id="section-2.2-3">Caching of unstably written data used to reissue WRITEs lost because
 of server failure prior to COMMIT is not affected by the advice
 provided by the uncacheable file data attribute.  This is because
 the server is made aware of the WRITE operation without the sort
-of delays introduced by write-behind caching.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
-<p id="section-2.1-4">Suppressing read caching in addition to suppressing write-behind
+of delays introduced by write-behind caching.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.2-4">Suppressing read caching in addition to suppressing write-behind
 caching reduces the risk of stale-data overwrite in multi-writer
 workloads.  If a client retains cached READ data while other clients
 concurrently modify disjoint byte ranges of the same file, the
 client may perform a read-modify-write operation using stale data
 and overwrite updates written by others.  This risk exists even
-when WRITE operations are transmitted promptly.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
-<p id="section-2.1-5">Disabling READ caching allows clients to observe the most recent
+when WRITE operations are transmitted promptly.<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+<p id="section-2.2-5">Disabling READ caching allows clients to observe the most recent
 data prior to modification and reduces read-modify-write hazards
 for shared files.  This behavior is consistent with direct I/O
 semantics such as those provided by the O_DIRECT flag in Linux and
-the directio/forcedirectio mechanisms in Solaris.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
-<p id="section-2.1-6">If the fattr4_uncacheable_file_data attribute is not set when a
+the directio/forcedirectio mechanisms in Solaris.<a href="#section-2.2-5" class="pilcrow">¶</a></p>
+<p id="section-2.2-6">If the fattr4_uncacheable_file_data attribute is not set when a
 file is opened and is changed while the file is open, the client
 is not expected to retroactively alter its caching behavior.  A
 client may choose to flush cached data and apply the advice to
 subsequent I/O, but such behavior is not required until the file
-is closed and reopened.<a href="#section-2.1-6" class="pilcrow">¶</a></p>
-<p id="section-2.1-7">The presence of the uncacheable file data attribute does not
+is closed and reopened.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
+<p id="section-2.2-7">The presence of the uncacheable file data attribute does not
 invalidate file delegations.  A server that wishes to ensure prompt
 client I/O may choose not to issue write delegations for files
 marked as uncacheable, but clients are not required to suppress
-delegations solely due to the presence of this attribute.<a href="#section-2.1-7" class="pilcrow">¶</a></p>
+delegations solely due to the presence of this attribute.<a href="#section-2.2-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1424,17 +1443,17 @@ written by others.  This risk exists even when WRITE data is
 transmitted promptly and is not addressed by suppressing write-behind
 caching alone.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <p id="section-3-3">One possible deployment model is for a server or administrator to
-configure a mount option such that newly created files under a given
-export are marked as uncacheable file data.  In such a configuration,
-the NFSv4.2 client could use SETATTR to set the
-fattr4_uncacheable_file_data attribute at file creation time.<a href="#section-3-3" class="pilcrow">¶</a></p>
-<p id="section-3-4">This approach is conceptually similar to the Solaris forcedirectio
-mount option (see <span>[<a href="#SOLARIS-FORCEDIRECTIO" class="cite xref">SOLARIS-FORCEDIRECTIO</a>]</span>) in that it allows
-DIRECT-I/O-like behavior to be applied without requiring changes
-to individual applications.  However, unlike the Solaris option,
-the NFSv4.2 attribute is visible to all clients accessing the file
-and is intended to convey server-side knowledge or policy in a
-distributed environment.<a href="#section-3-4" class="pilcrow">¶</a></p>
+configure a mount (see <span>[<a href="#MOUNT" class="cite xref">MOUNT</a>]</span>) option such that newly created
+files under a given export are marked as uncacheable file data.  In
+such a configuration, the NFSv4.2 client could use SETATTR to set
+the fattr4_uncacheable_file_data attribute at file creation time.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">This approach is conceptually similar int intent to the Solaris forcedirectio
+mount option (see <span>[<a href="#SOLARIS-FORCEDIRECTIO" class="cite xref">SOLARIS-FORCEDIRECTIO</a>]</span>), but differs in scope
+and visibility in that it allows DIRECT-I/O-like behavior to be
+applied without requiring changes to individual applications.
+However, unlike the Solaris option, the NFSv4.2 attribute is visible
+to all clients accessing the file and is intended to convey server-side
+knowledge or policy in a distributed environment.<a href="#section-3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="implementation-status">
@@ -1444,9 +1463,9 @@ distributed environment.<a href="#section-3-4" class="pilcrow">¶</a></p>
       </h2>
 <p id="section-4-1">There is a prototype Hammerspace server which implements the
 uncacheable file data attribute and a prototype Linux client which
-treats the uncacheable file data attribute as meaning use O_DIRECT.
-For the prototype, all files created under the mount point have the
-fattr4_uncacheable_file_data set to be true.<a href="#section-4-1" class="pilcrow">¶</a></p>
+treats the uncacheable file data attribute as an indication to use
+O_DIRECT.  For the prototype, all files created under the mount
+point have the fattr4_uncacheable_file_data set to be true.<a href="#section-4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="xdr-for-uncacheable-attribute">
@@ -1508,7 +1527,9 @@ should be placed in their appropriate sections within the existing XDR.<a href="
       <h2 id="name-security-considerations">
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-7-1">This document imposes no new security considerations to NFSv4.2.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-1">The attribute does not introduce new authorization mechanisms or
+alter existing access control semantics; existing NFSv4.2 security
+mechanisms continue to apply.<a href="#section-7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1575,10 +1596,6 @@ should be placed in their appropriate sections within the existing XDR.<a href="
         <dd>
 <span class="refAuthor">Linux man-pages project</span>, <span class="refTitle">"mount(2) - mount filesystem"</span>, <span class="seriesInfo">Linux Programmer's Manual</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://man7.org/linux/man-pages/man2/mount.2.html">https://man7.org/linux/man-pages/man2/mount.2.html</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="OPEN">[OPEN]</dt>
-        <dd>
-<span class="refAuthor">Linux man-pages project</span>, <span class="refTitle">"open(2) - open and possibly create a file"</span>, <span class="seriesInfo">Linux Programmer's Manual</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://man7.org/linux/man-pages/man2/open.2.html">https://man7.org/linux/man-pages/man2/open.2.html</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="OPEN-O_DIRECT">[OPEN-O_DIRECT]</dt>
         <dd>
 <span class="refAuthor">Linux man-pages project</span>, <span class="refTitle">"open(2) - Linux system call for opening files (O_DIRECT)"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://man7.org/linux/man-pages/man2/open.2.html">https://man7.org/linux/man-pages/man2/open.2.html</a>&gt;</span>. </dd>
@@ -1597,8 +1614,8 @@ should be placed in their appropriate sections within the existing XDR.<a href="
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">Trond Myklebust, Mike Snitzer, and Thomas Haynes all worked on the
-prototype at Hammerspace.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-1">Trond Myklebust, Mike Snitzer, Jon Flynn, Keith Mannthey, and Thomas
+Haynes all worked on the prototype at Hammerspace.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 <p id="appendix-A-2">Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
 <p id="appendix-A-3">Chris Inacio, Brian Pawlowski, and Gorry Fairhurst helped guide
 this process.<a href="#appendix-A-3" class="pilcrow">¶</a></p>

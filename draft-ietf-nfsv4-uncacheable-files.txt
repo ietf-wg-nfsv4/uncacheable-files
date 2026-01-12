@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                         11 January 2026
-Expires: 15 July 2026
+Intended status: Standards Track                         12 January 2026
+Expires: 16 July 2026
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -13,16 +13,17 @@ Expires: 15 July 2026
 
 Abstract
 
-   Network File System version 4.2 (NFSv4.2) clients commonly cache file
-   data in order to improve performance.  On some systems, applications
-   may influence client data caching behavior, but there is no
-   standardized mechanism for a server or administrator to indicate that
-   particular file data should not be cached by clients for reasons of
-   performance or correctness.  This document introduces a new file data
-   caching attribute for NFSv4.2.  Files marked with this attribute are
-   intended to be accessed with client-side caching of file data
-   suppressed, in order to support workloads that require predictable
-   data visibility.  This document extends NFSv4.2 (see RFC7862).
+   Network File System version 4.2 (NFSv4.2) clients commonly perform
+   client-side caching of file data in order to improve performance.  On
+   some systems, applications may influence client data caching
+   behavior, but there is no standardized mechanism for a server or
+   administrator to indicate that particular file data should not be
+   cached by clients for reasons of performance or correctness.  This
+   document introduces a new file data caching attribute for NFSv4.2.
+   Files marked with this attribute are intended to be accessed with
+   client-side caching of file data suppressed, in order to support
+   workloads that require predictable data visibility.  This document
+   extends NFSv4.2 (see RFC7862).
 
 Note to Readers
 
@@ -50,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 July 2026.
+   This Internet-Draft will expire on 16 July 2026.
 
 Copyright Notice
 
@@ -71,8 +72,9 @@ Table of Contents
    1.  Introduction
      1.1.  Definitions
      1.2.  Requirements Language
-   2.  Caching of File Data
-     2.1.  Uncacheable File Data
+   2.  Client-Side Caching of File Data
+     2.1.  Non-Goals
+     2.2.  Uncacheable File Data
    3.  Setting the Uncacheable File Data Attribute
    4.  Implementation Status
    5.  XDR for Uncacheable Attribute
@@ -87,23 +89,24 @@ Table of Contents
 
 1.  Introduction
 
-   Clients of remote filesystems commonly cache file data in order to
-   improve performance.  Such caching may include retaining data read
-   from the server to satisfy subsequent READ requests, as well as
-   retaining data written by applications in order to delay or combine
-   WRITE requests before transmitting them to the server.  While these
-   techniques are effective for many workloads, they may be unsuitable
-   for workloads that require predictable data visibility or involve
-   concurrent modification of shared files by multiple clients.
+   Clients of remote filesystems commonly perform client-side caching of
+   file dat in order to improve performance.  Such caching may include
+   retaining data read from the server to satisfy subsequent READ
+   requests, as well as retaining data written by applications in order
+   to delay or combine WRITE requests before transmitting them to the
+   server.  While these techniques are effective for many workloads,
+   they may be unsuitable for workloads that require predictable data
+   visibility or involve concurrent modification of shared files by
+   multiple clients.
 
-   In some cases, Network File System version 4.2 (NFSv4.2) (See
+   In some cases, Network File System version 4.2 (NFSv4.2) (see
    [RFC7862]) mechanisms such as file delegations can reduce the impact
    of concurrent access.  However, delegations are not always available
    or effective, particularly for workloads with frequent concurrent
    writers or rapidly changing access patterns.
 
    There have been prior efforts to bypass file data caching in order to
-   address these issues.  In Highly Parallel Computing (HPC) workloads,
+   address these issues.  In High-Performance Computing (HPC) workloads,
    file data caching is often bypassed to improve predictability and to
    avoid read-modify-write hazards when multiple clients write disjoint
    byte ranges of the same file.
@@ -119,7 +122,7 @@ Table of Contents
    NFSv4.2.  This OPTIONAL attribute allows a server to indicate that
    client-side caching of file data for a particular file is unsuitable.
    When both the client and the server support this attribute, the
-   client SHOULD suppress client-side caching of file data for that
+   client is advised suppress client-side caching of file data for that
    file, in accordance with the semantics defined in this document.
 
    The uncacheable file data attribute is read-write, applies on a per-
@@ -133,7 +136,10 @@ Table of Contents
 
    The uncacheable file data attribute applies only to regular files
    (NF4REG).  Attempts to query or set this attribute on objects of
-   other types MUST result in an error of NFS4ERR_INVAL.
+   other types MUST result in an error of NFS4ERR_INVAL.  Since the
+   uncacheable file data attribute applies only to regular files,
+   attempts to apply it to other object types represent an invalid use
+   of the attribute.
 
    Using the process described in [RFC8178], the revisions in this
    document extend NFSv4.2 [RFC7862].  They are built on top of the
@@ -142,10 +148,10 @@ Table of Contents
 
 1.1.  Definitions
 
-   file data caching  The retention of file data by a client in a local
-      data cache, commonly referred to as the page cache, for the
-      purpose of satisfying subsequent READ requests or delaying
-      transmission of WRITE data to the server.
+   client-side caching of file data  The retention of file data by a
+      client in a local data cache, commonly referred to as the page
+      cache, for the purpose of satisfying subsequent READ requests or
+      delaying transmission of WRITE data to the server.
 
    write-behind caching  A form of file data caching in which WRITE data
       is retained by the client and transmission of the data to the
@@ -154,7 +160,7 @@ Table of Contents
 
    direct I/O  An access mode in which file data is transferred between
       application buffers and the underlying storage without populating
-      or consulting the client’s file data cache.  Direct I/O suppresses
+      or consulting the client's file data cache.  Direct I/O suppresses
       both read caching and write-behind caching of file data.
 
    write hole  A write hole is an instance of data corruption that
@@ -176,15 +182,16 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-2.  Caching of File Data
+2.  Client-Side Caching of File Data
 
    The uncacheable file data attribute advises the client to bypass its
    page cache for a file in certain troublesome cases.  These include
-   forms of file data caching such as write-behind caching, in which
-   multiple pending WRITEs are combined and transmitted to the server at
-   a later time for efficiency.  The uncacheable file data attribute
-   inhibits such behavior with an effect similar to that of using the
-   O_DIRECT flag with the open call ([OPEN-O_DIRECT]).
+   forms of client-side caching of file data such as write-behind
+   caching, in which multiple pending WRITEs are combined and
+   transmitted to the server at a later time for efficiency.  The
+   uncacheable file data attribute inhibits such behavior with an effect
+   similar to that of using the O_DIRECT flag with the open call
+   ([OPEN-O_DIRECT]).
 
    The intent of this attribute is to allow a server or administrator to
    indicate that client-side caching of file data for a particular file
@@ -195,7 +202,7 @@ Table of Contents
    suppress file data caching in a consistent manner.
 
    One important use case for this attribute arises in connection with
-   Highly Parallel Computing (HPC) workloads.  These workloads often
+   High-Performance Computing (HPC) workloads.  These workloads often
    involve large data transfers and concurrent access by multiple
    clients.  In such environments, client-side caching of file data can
    introduce unpredictable latency or correctness hazards when data is
@@ -208,7 +215,15 @@ Table of Contents
    others.  Prompt transmission of WRITE data enables the prompt
    detection of write holes and reduces the risk of data corruption.
 
-2.1.  Uncacheable File Data
+2.1.  Non-Goals
+
+   This attribute does not require clients to provide strict coherency,
+   does not replace existing NFS cache consistency mechanisms, and does
+   not mandate any specific client implementation strategy.  It provides
+   advisory guidance intended to reduce latency and correctness risks in
+   selected workloads.
+
+2.2.  Uncacheable File Data
 
    When a file object is marked as uncacheable file data, the attribute
    advises the client that client-side caching of file data for the file
@@ -277,26 +292,26 @@ Table of Contents
    caching alone.
 
    One possible deployment model is for a server or administrator to
-   configure a mount option such that newly created files under a given
-   export are marked as uncacheable file data.  In such a configuration,
-   the NFSv4.2 client could use SETATTR to set the
+   configure a mount (see [MOUNT]) option such that newly created files
+   under a given export are marked as uncacheable file data.  In such a
+   configuration, the NFSv4.2 client could use SETATTR to set the
    fattr4_uncacheable_file_data attribute at file creation time.
 
-   This approach is conceptually similar to the Solaris forcedirectio
-   mount option (see [SOLARIS-FORCEDIRECTIO]) in that it allows DIRECT-
-   I/O-like behavior to be applied without requiring changes to
-   individual applications.  However, unlike the Solaris option, the
-   NFSv4.2 attribute is visible to all clients accessing the file and is
-   intended to convey server-side knowledge or policy in a distributed
-   environment.
+   This approach is conceptually similar int intent to the Solaris
+   forcedirectio mount option (see [SOLARIS-FORCEDIRECTIO]), but differs
+   in scope and visibility in that it allows DIRECT-I/O-like behavior to
+   be applied without requiring changes to individual applications.
+   However, unlike the Solaris option, the NFSv4.2 attribute is visible
+   to all clients accessing the file and is intended to convey server-
+   side knowledge or policy in a distributed environment.
 
 4.  Implementation Status
 
    There is a prototype Hammerspace server which implements the
    uncacheable file data attribute and a prototype Linux client which
-   treats the uncacheable file data attribute as meaning use O_DIRECT.
-   For the prototype, all files created under the mount point have the
-   fattr4_uncacheable_file_data set to be true.
+   treats the uncacheable file data attribute as an indication to use
+   O_DIRECT.  For the prototype, all files created under the mount point
+   have the fattr4_uncacheable_file_data set to be true.
 
 5.  XDR for Uncacheable Attribute
 
@@ -341,7 +356,9 @@ Table of Contents
 
 7.  Security Considerations
 
-   This document imposes no new security considerations to NFSv4.2.
+   The attribute does not introduce new authorization mechanisms or
+   alter existing access control semantics; existing NFSv4.2 security
+   mechanisms continue to apply.
 
 8.  IANA Considerations
 
@@ -395,10 +412,6 @@ Table of Contents
               Linux Programmer's Manual, 2024,
               <https://man7.org/linux/man-pages/man2/mount.2.html>.
 
-   [OPEN]     Linux man-pages project, "open(2) - open and possibly
-              create a file", Linux Programmer's Manual, 2024,
-              <https://man7.org/linux/man-pages/man2/open.2.html>.
-
    [OPEN-O_DIRECT]
               Linux man-pages project, "open(2) - Linux system call for
               opening files (O_DIRECT)", 2024,
@@ -414,8 +427,8 @@ Table of Contents
 
 Acknowledgments
 
-   Trond Myklebust, Mike Snitzer, and Thomas Haynes all worked on the
-   prototype at Hammerspace.
+   Trond Myklebust, Mike Snitzer, Jon Flynn, Keith Mannthey, and Thomas
+   Haynes all worked on the prototype at Hammerspace.
 
    Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.
 
