@@ -368,8 +368,8 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-Trond Myklebust, Mike Snitzer, and Thomas Haynes all worked on the
-prototype at Hammerspace.
+Trond Myklebust, Mike Snitzer, Jon Flynn, Keith Mannthey, and Thomas
+Haynes all worked on the prototype at Hammerspace.
 
 Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.
 
