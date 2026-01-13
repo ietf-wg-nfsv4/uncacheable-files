@@ -307,6 +307,13 @@ treats the uncacheable file data attribute as an indication to use
 O_DIRECT.  For the prototype, all files created under the mount
 point have the fattr4_uncacheable_file_data set to be true.
 
+Experience with the prototype indicates that the uncacheable file
+data attribute can provide many of the practical benefits of O_DIRECT
+without requiring application modification. For applications that
+issue well-formed I/O requests, this approach has been observed to
+improve performance in many cases, while also reducing memory
+pressure and CPU utilization in the NFS client.
+
 # XDR for Uncacheable Attribute
 
 ~~~ xdr
