@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                         12 January 2026
-Expires: 16 July 2026
+Intended status: Standards Track                         13 January 2026
+Expires: 17 July 2026
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 July 2026.
+   This Internet-Draft will expire on 17 July 2026.
 
 Copyright Notice
 
@@ -312,6 +312,13 @@ Table of Contents
    treats the uncacheable file data attribute as an indication to use
    O_DIRECT.  For the prototype, all files created under the mount point
    have the fattr4_uncacheable_file_data set to be true.
+
+   Experience with the prototype indicates that the uncacheable file
+   data attribute can provide many of the practical benefits of O_DIRECT
+   without requiring application modification.  For applications that
+   issue well-formed I/O requests, this approach has been observed to
+   improve performance in many cases, while also reducing memory
+   pressure and CPU utilization in the NFS client.
 
 5.  XDR for Uncacheable Attribute
 
