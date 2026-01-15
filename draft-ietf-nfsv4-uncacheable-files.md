@@ -84,7 +84,7 @@ Working Group information can be found at [](https://github.com/ietf-wg-nfsv4).
 # Introduction
 
 Clients of remote filesystems commonly perform client-side caching
-of file dat in order to improve performance.  Such caching may
+of file data in order to improve performance.  Such caching may
 include retaining data read from the server to satisfy subsequent
 READ requests, as well as retaining data written by applications
 in order to delay or combine WRITE requests before transmitting
