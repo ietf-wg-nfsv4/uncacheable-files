@@ -176,11 +176,13 @@ approach does not generalize well to NFS, where directory contents
 and metadata have traditionally been shared and cached on the client.
 
 Even in the absence of ABE, caching of directory-entry metadata can
-result in incorrect size and timestamp information when files are
-modified concurrently. This reduces the effectiveness of uncacheable
-file data semantics when directory-entry metadata becomes stale,
-and can lead to applications observing inconsistent views of file
-data and metadata.
+lead to reuse of file-associated metadata that no longer reflects
+current server state when files are modified concurrently. While
+existing NFSv4.2 cache consistency mechanisms (such as change-attribute–based
+validation) remain sufficient to ensure correctness, reliance on
+previously observed metadata without revalidation can reduce the
+predictability benefits that suppression of file data caching is
+intended to provide.
 
 NFSv4.2 enforces ACLs on the server rather than the client. As a
 result, correct enforcement of access permissions may require the
@@ -206,15 +208,21 @@ external data representation (XDR) {{RFC4506}} generated from
 This document defines a single uncacheable attribute whose effects
 depend on the type of object on which it is set.
 
-When set on a regular file (NF4REG), the uncacheable attribute advises
-the client that client-side caching of file data and metadata used to
-interpret that data is unsuitable. File data retrieved or written on
-behalf of one user MUST NOT be reused to satisfy file access requests
-made on behalf of another user. Clients MUST NOT share
-cached file data across users when the uncacheable attribute is set.
-The client is also advised not to rely on cached directory-entry
-metadata when observing or modifying the file, in order to avoid
-inconsistencies between cached metadata and current file contents.
+When set on a regular file (NF4REG), the uncacheable attribute
+advises the client that client-side caching of file data is unsuitable
+for that file. In particular, file data retrieved or written on
+behalf of one user SHOULD NOT be reused to satisfy file access
+requests made on behalf of another user, even when access permissions
+would otherwise permit such reuse.
+
+The attribute does not alter the semantics of the NFSv4 change
+attribute.  Clients MAY continue to cache and reuse file-associated
+metadata provided that such metadata is validated using the change
+attribute as defined in {{RFC8881}}. However, when honoring the
+uncacheable advice, clients SHOULD take care not to rely on previously
+observed file-associated metadata without appropriate revalidation,
+as doing so may reduce the predictability benefits that motivate
+suppression of file data caching.
 
 When set on a directory (NF4DIR), the uncacheable attribute advises
 the client that caching of directory-entry metadata returned by
@@ -224,6 +232,16 @@ such metadata across users.
 In both cases, the attribute provides advisory guidance intended
 to prevent clients from observing fresh file data through stale or
 inappropriately shared metadata.
+
+The uncacheable attribute does not require servers to omit attributes
+from protocol responses, nor does it depend on servers hiding file
+or directory metadata to enforce client behavior.
+
+The uncacheable attribute does not mandate a particular client
+implementation strategy. It provides advisory information intended to
+align client behavior with server knowledge or workload requirements.
+Clients that do not support or do not honor the attribute continue to
+operate correctly according to existing NFSv4.2 semantics.
 
 ## Definitions
 
@@ -299,10 +317,11 @@ using the O_DIRECT flag with the open call ({{OPEN-O_DIRECT}}).
 
 On multi-user clients, file data caching is commonly shared across
 users once access checks have succeeded. When the uncacheable
-attribute is set on a file, such sharing is unsuitable. Clients are
-advised not to reuse file data retrieved on behalf of one user to
-satisfy file access on behalf of another user, even if both users
-are authorized to access the file.
+attribute is set on a file, such sharing is unsuitable.  Clients
+are advised that reuse of file data retrieved on behalf of one user
+to satisfy file access on behalf of another user may reduce the
+predictability benefits associated with suppressing file data
+caching, even when both users are authorized to access the file.
 
 The intent of this attribute is to allow a server or administrator
 to indicate that client-side caching of file data for a particular
@@ -329,10 +348,18 @@ of write holes and reduces the risk of data corruption.
 ## Non-Goals
 
 The uncacheable attribute does not require clients to provide strict
-coherency, does not replace existing NFS cache consistency mechanisms,
+coherency, does not replace existing NFSv4.2 cache consistency mechanisms,
 and does not mandate any specific client implementation strategy.
 It provides advisory guidance intended to reduce latency and
 correctness risks in selected workloads.
+
+Nothing in this document alters the requirements for correct client
+behavior defined in {{RFC8881}}. In particular, this document does
+not prohibit caching of file-associated metadata, nor does it
+invalidate change-attribute–based validation. Clients that cache
+metadata and rely on the change attribute to detect modification
+continue to behave correctly, whether or not the uncacheable attribute
+is present.
 
 ## Uncacheable File Data {#sec_files}
 
@@ -451,14 +478,19 @@ and related operations. It does not define behavior for positive
 or negative name caching, nor for caching of LOOKUP results outside
 the scope of directory-entry metadata.
 
-Because the uncacheable attribute applies to both file data and
-directory-entry metadata, clients avoid observing fresh file data
-through stale metadata. The uncacheable attribute therefore governs
-caching of both file data and directory-entry metadata, ensuring
-that clients do not observe fresh file data through stale metadata.
-Directory delegations do not address per-user directory-entry
-metadata visibility and therefore cannot replace the semantics
-defined by the uncacheable attribute.
+Because the uncacheable attribute provides advisory guidance for both
+file data caching and directory-entry metadata caching, clients that
+honor the attribute are less likely to rely on previously observed
+metadata without revalidation when accessing current file data.
+This improves predictability in selected workloads but does not
+replace existing NFSv4.2 cache consistency mechanisms.
+
+The uncacheable attribute therefore governs caching of both file
+data and directory-entry metadata, ensuring that clients do not
+observe fresh file data through stale metadata.  Directory delegations
+do not address per-user directory-entry metadata visibility and
+therefore cannot replace the semantics defined by the uncacheable
+attribute.
 
 ## Uncacheable Directory-Entry Metadata Semantics {#sec_dirents}
 
@@ -604,7 +636,7 @@ attribute can provide many of the practical benefits associated
 with direct I/O without requiring application modification. For
 applications that issue well-formed I/O requests, this approach has
 been observed to improve performance in some cases, while also
-reducing memory pressure and CPU utilization in the NFS client.
+reducing memory pressure and CPU utilization in the NFSv4.2 client.
 
 # XDR for Uncacheable Attribute
 
