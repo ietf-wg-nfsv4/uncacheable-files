@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                         13 January 2026
-Expires: 17 July 2026
+Intended status: Standards Track                           12 March 2026
+Expires: 13 September 2026
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 July 2026.
+   This Internet-Draft will expire on 13 September 2026.
 
 Copyright Notice
 
@@ -90,7 +90,7 @@ Table of Contents
 1.  Introduction
 
    Clients of remote filesystems commonly perform client-side caching of
-   file dat in order to improve performance.  Such caching may include
+   file data in order to improve performance.  Such caching may include
    retaining data read from the server to satisfy subsequent READ
    requests, as well as retaining data written by applications in order
    to delay or combine WRITE requests before transmitting them to the
@@ -122,8 +122,8 @@ Table of Contents
    NFSv4.2.  This OPTIONAL attribute allows a server to indicate that
    client-side caching of file data for a particular file is unsuitable.
    When both the client and the server support this attribute, the
-   client is advised suppress client-side caching of file data for that
-   file, in accordance with the semantics defined in this document.
+   client is advised to suppress client-side caching of file data for
+   that file, in accordance with the semantics defined in this document.
 
    The uncacheable file data attribute is read-write, applies on a per-
    file basis, and has a data type of boolean.
@@ -185,13 +185,23 @@ Table of Contents
 2.  Client-Side Caching of File Data
 
    The uncacheable file data attribute advises the client to bypass its
-   page cache for a file in certain troublesome cases.  These include
-   forms of client-side caching of file data such as write-behind
-   caching, in which multiple pending WRITEs are combined and
-   transmitted to the server at a later time for efficiency.  The
-   uncacheable file data attribute inhibits such behavior with an effect
-   similar to that of using the O_DIRECT flag with the open call
-   ([OPEN-O_DIRECT]).
+   page cache for a file in certain cases.  These include forms of
+   client-side caching of file data such as write-behind caching, in
+   which multiple pending WRITEs are combined and transmitted to the
+   server at a later time for efficiency.  The uncacheable file data
+   attribute inhibits such behavior with an effect similar to that of
+   using the O_DIRECT flag with the open call ([OPEN-O_DIRECT]).
+
+   While similar in intent to O_DIRECT, the uncacheable file data
+   attribute applies at the protocol level and therefore may influence
+   client behavior beyond application-requested direct I/O semantics.
+
+   When honoring the uncacheable file data attribute, clients SHOULD
+   ensure that file-associated metadata used to make I/O decisions (such
+   as file size or timestamps) is revalidated before exposing cached
+   state to applications.  Reuse of stale metadata may otherwise lead
+   applications to make decisions based on outdated file state even when
+   file data caching itself has been suppressed.
 
    The intent of this attribute is to allow a server or administrator to
    indicate that client-side caching of file data for a particular file
@@ -309,9 +319,12 @@ Table of Contents
 
    There is a prototype Hammerspace server which implements the
    uncacheable file data attribute and a prototype Linux client which
-   treats the uncacheable file data attribute as an indication to use
-   O_DIRECT.  For the prototype, all files created under the mount point
-   have the fattr4_uncacheable_file_data set to be true.
+   treats the attribute as an indication to use O_DIRECT-like behavior
+   for file access and to revalidate file-associated metadata before
+   exposing cached state.
+
+   For the prototype, all files created under the mount point have the
+   fattr4_uncacheable_file_data set to be true.
 
    Experience with the prototype indicates that the uncacheable file
    data attribute can provide many of the practical benefits of O_DIRECT
