@@ -116,7 +116,7 @@ This document introduces the uncacheable file data attribute to
 NFSv4.2.  This OPTIONAL attribute allows a server to indicate that
 client-side caching of file data for a particular file is unsuitable.
 When both the client and the server support this attribute, the
-client is advised suppress client-side caching of file data for
+client is advised to suppress client-side caching of file data for
 that file, in accordance with the semantics defined in this document.
 
 The uncacheable file data attribute is read-write, applies on a
@@ -180,12 +180,23 @@ error codes, object types, and attributes as defined in {{RFC8881}}.
 # Client-Side Caching of File Data
 
 The uncacheable file data attribute advises the client to bypass
-its page cache for a file in certain troublesome cases.  These
-include forms of client-side caching of file data such as write-behind
-caching, in which multiple pending WRITEs are combined and transmitted
-to the server at a later time for efficiency.  The uncacheable file
+its page cache for a file in certain cases.  These include forms
+of client-side caching of file data such as write-behind caching,
+in which multiple pending WRITEs are combined and transmitted to
+the server at a later time for efficiency.  The uncacheable file
 data attribute inhibits such behavior with an effect similar to
 that of using the O_DIRECT flag with the open call ({{OPEN-O_DIRECT}}).
+
+While similar in intent to O_DIRECT, the uncacheable file data
+attribute applies at the protocol level and therefore may influence
+client behavior beyond application-requested direct I/O semantics.
+
+When honoring the uncacheable file data attribute, clients SHOULD
+ensure that file-associated metadata used to make I/O decisions
+(such as file size or timestamps) is revalidated before exposing
+cached state to applications. Reuse of stale metadata may otherwise
+lead applications to make decisions based on outdated file state
+even when file data caching itself has been suppressed.
 
 The intent of this attribute is to allow a server or administrator
 to indicate that client-side caching of file data for a particular
@@ -303,8 +314,11 @@ knowledge or policy in a distributed environment.
 
 There is a prototype Hammerspace server which implements the
 uncacheable file data attribute and a prototype Linux client which
-treats the uncacheable file data attribute as an indication to use
-O_DIRECT.  For the prototype, all files created under the mount
+treats the attribute as an indication to use O_DIRECT-like behavior
+for file access and to revalidate file-associated metadata before
+exposing cached state.
+
+For the prototype, all files created under the mount
 point have the fattr4_uncacheable_file_data set to be true.
 
 Experience with the prototype indicates that the uncacheable file
