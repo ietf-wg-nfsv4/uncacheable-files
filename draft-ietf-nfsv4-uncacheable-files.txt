@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                           12 March 2026
-Expires: 13 September 2026
+Intended status: Standards Track                           15 March 2026
+Expires: 16 September 2026
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 September 2026.
+   This Internet-Draft will expire on 16 September 2026.
 
 Copyright Notice
 
@@ -316,6 +316,8 @@ Table of Contents
    side knowledge or policy in a distributed environment.
 
 4.  Implementation Status
+
+   Note to RFC Editor: please remove this section prior to publication.
 
    There is a prototype Hammerspace server which implements the
    uncacheable file data attribute and a prototype Linux client which
