@@ -312,6 +312,8 @@ knowledge or policy in a distributed environment.
 
 # Implementation Status
 
+Note to RFC Editor: please remove this section prior to publication.
+
 There is a prototype Hammerspace server which implements the
 uncacheable file data attribute and a prototype Linux client which
 treats the attribute as an indication to use O_DIRECT-like behavior
