@@ -307,7 +307,7 @@ Table of Contents
    configuration, the NFSv4.2 client could use SETATTR to set the
    fattr4_uncacheable_file_data attribute at file creation time.
 
-   This approach is conceptually similar int intent to the Solaris
+   This approach is conceptually similar in intent to the Solaris
    forcedirectio mount option (see [SOLARIS-FORCEDIRECTIO]), but differs
    in scope and visibility in that it allows DIRECT-I/O-like behavior to
    be applied without requiring changes to individual applications.
