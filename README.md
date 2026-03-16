@@ -1,21 +1,22 @@
-# Adding an Uncacheable File Attribute to NFSv4.2
+<!-- regenerate: on (set to off if you edit this file) -->
 
-This is the working area for the individual Internet-Draft, "Adding an Uncacheable File Attribute to NFSv4.2".
+# Adding an Uncacheable File Data Attribute to NFSv4.2
 
-* [Editor's Copy](https://ietf-wg-nfsv4.github.io/uncacheable/#go.draft-ietf-nfsv4-uncacheable-files.html)
+This is the working area for the IETF [NFSV4 Working Group](https://datatracker.ietf.org/group/nfsv4/documents/) Internet-Draft, "Adding an Uncacheable File Data Attribute to NFSv4.2".
+
+* [Editor's Copy](https://ietf-wg-nfsv4.github.io/uncacheable-files/#go.draft-ietf-nfsv4-uncacheable-files.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-nfsv4-uncacheable-files)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-ietf-nfsv4-uncacheable-files)
-* [Compare Editor's Copy to Individual Draft](https://ietf-wg-nfsv4.github.io/uncacheable/#go.draft-ietf-nfsv4-uncacheable-files.diff)
+* [Working Group Draft](https://datatracker.ietf.org/doc/html/draft-ietf-nfsv4-uncacheable-files)
+* [Compare Editor's Copy to Working Group Draft](https://ietf-wg-nfsv4.github.io/uncacheable-files/#go.draft-ietf-nfsv4-uncacheable-files.diff)
 
 
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/ietf-wg-nfsv4/uncacheable/blob/main/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/ietf-wg-nfsv4/uncacheable-files/blob/main/CONTRIBUTING.md).
 
-Contributions can be made by creating pull requests.
-The GitHub interface supports creating pull requests using the Edit (✏) button.
-
+The contributing file also has tips on how to make contributions, if you
+don't already know how to do that.
 
 ## Command Line Usage
 
