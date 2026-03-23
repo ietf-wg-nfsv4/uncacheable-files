@@ -191,12 +191,22 @@ While similar in intent to O_DIRECT, the uncacheable file data
 attribute applies at the protocol level and therefore may influence
 client behavior beyond application-requested direct I/O semantics.
 
-When honoring the uncacheable file data attribute, clients SHOULD
-ensure that file-associated metadata used to make I/O decisions
-(such as file size or timestamps) is revalidated before exposing
-cached state to applications. Reuse of stale metadata may otherwise
-lead applications to make decisions based on outdated file state
-even when file data caching itself has been suppressed.
+When honoring the uncacheable file data attribute, clients MUST
+ensure that cached file data is not reused without first validating
+that the file has not changed.
+
+At a minimum, clients MUST revalidate metadata necessary to ensure
+correctness of cached file data, including the change attribute and
+file size. These attributes provide the primary mechanism for
+detecting modification of file contents.
+
+Clients MAY revalidate additional attributes (e.g., modification
+time or change time) as required by their local semantics or
+application requirements.
+
+Failure to perform such revalidation can result in the client
+presenting stale or inconsistent file state (e.g., incorrect size
+or timestamps) to the application.
 
 The intent of this attribute is to allow a server or administrator
 to indicate that client-side caching of file data for a particular
@@ -219,6 +229,22 @@ in a client cache, delayed transmission of WRITE data can result
 in clients modifying stale data and overwriting updates written by
 others.  Prompt transmission of WRITE data enables the prompt
 detection of write holes and reduces the risk of data corruption.
+
+## Implementation Guidance (Non-Normative)
+
+This section provides non-normative guidance to assist implementers in
+satisfying the requirements described above. These examples are
+illustrative and do not mandate any specific implementation approach.
+
+Clients may implement the requirement using a variety of strategies.
+For example, a client may:
+
+- Always revalidate relevant metadata via GETATTR prior to I/O, or
+- Use cached metadata but validate it using a coherency mechanism
+  such as the change attribute before reusing cached file data.
+
+The choice of mechanism is implementation-dependent, provided that
+the requirements above are satisfied.
 
 ## Non-Goals
 
