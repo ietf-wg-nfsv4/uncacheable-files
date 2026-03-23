@@ -354,9 +354,31 @@ should be placed in their appropriate sections within the existing XDR.
 
 # Security Considerations
 
-The attribute does not introduce new authorization mechanisms or
-alter existing access control semantics; existing NFSv4.2 security
-mechanisms continue to apply.
+The uncacheable file data attribute does not introduce new
+authentication or authorization mechanisms and does not alter
+existing NFSv4.2 access control semantics. All operations that set
+or clear the attribute are subject to existing access control and
+server policy.
+
+In particular, a server MUST enforce appropriate authorization
+checks for SETATTR operations that modify the fattr4_uncacheable_file_data
+attribute. The ability to set or clear the attribute may be restricted
+based on administrative configuration, export policy, or other
+server-defined criteria.
+
+Because the attribute is visible to and may affect the behavior of
+multiple clients, servers should consider the implications of
+allowing unprivileged users to modify it. Inappropriate use of the
+attribute could impact performance or data access patterns for other
+clients accessing the same file.
+
+The uncacheable file data attribute is advisory and does not provide
+a security boundary. Clients MUST NOT rely on the presence or absence
+of this attribute to make access control decisions.
+
+Use of this attribute does not replace or modify existing cache
+consistency mechanisms or data integrity protections provided by
+NFSv4.2.
 
 # IANA Considerations
 
