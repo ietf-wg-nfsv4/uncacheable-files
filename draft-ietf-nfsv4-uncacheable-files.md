@@ -177,23 +177,52 @@ error codes, object types, and attributes as defined in {{RFC8881}}.
 
 {::boilerplate bcp14-tagged}
 
+
 # Client-Side Caching of File Data
 
-The uncacheable file data attribute advises the client to bypass
-its page cache for a file in certain cases.  These include forms
-of client-side caching of file data such as write-behind caching,
+The uncacheable file data attribute advises the client to limit the
+use of client-side caching of file data for a file. This includes
+both write-behind caching and read caching, which are addressed
+separately below.
+
+The intent of this attribute is to allow a server or administrator
+to indicate that client-side caching of file data for a particular
+file is unsuitable. The server is often in a better position than
+individual clients to determine sharing patterns, access behavior,
+or correctness requirements associated with a file. By exposing
+this information via an attribute, the server can advise clients
+to limit file data caching in a consistent manner.
+
+## Write-Behind Caching
+
+The uncacheable file data attribute inhibits write-behind caching,
 in which multiple pending WRITEs are combined and transmitted to
-the server at a later time for efficiency.  The uncacheable file
-data attribute inhibits such behavior with an effect similar to
-that of using the O_DIRECT flag with the open call ({{OPEN-O_DIRECT}}).
+the server at a later time for efficiency.
 
-While similar in intent to O_DIRECT, the uncacheable file data
-attribute applies at the protocol level and therefore may influence
-client behavior beyond application-requested direct I/O semantics.
+When honoring the uncacheable file data attribute, clients SHOULD
+NOT delay transmission of WRITE data for the purpose of combining
+multiple WRITE operations or improving efficiency.
 
-When honoring the uncacheable file data attribute, clients MUST
-ensure that cached file data is not reused without first validating
-that the file has not changed.
+One important use case for this attribute arises in connection with
+High-Performance Computing (HPC) workloads. These workloads often
+involve concurrent writers modifying disjoint byte ranges of shared
+files.
+
+When application data spans a data block in a client cache, delayed
+transmission of WRITE data can result in clients modifying stale
+data and overwriting updates written by others. Prompt transmission
+of WRITE data enables the prompt detection of write holes and reduces
+the risk of data corruption.
+
+## Read Caching
+
+The uncacheable file data attribute may also influence the use of
+read caching. Retaining cached READ data while other clients
+concurrently modify disjoint byte ranges of the same file can result
+in read-modify- write operations based on stale data.
+
+Clients SHOULD ensure that cached file data is not reused without
+first validating that the file has not changed.
 
 At a minimum, clients MUST revalidate metadata necessary to ensure
 correctness of cached file data, including the change attribute and
@@ -208,101 +237,19 @@ Failure to perform such revalidation can result in the client
 presenting stale or inconsistent file state (e.g., incorrect size
 or timestamps) to the application.
 
-The intent of this attribute is to allow a server or administrator
-to indicate that client-side caching of file data for a particular
-file is unsuitable.  The server is often in a better position than
-individual clients to determine sharing patterns, access behavior,
-or correctness requirements associated with a file.  By exposing
-this information via an attribute, the server can advise clients
-to suppress file data caching in a consistent manner.
-
-One important use case for this attribute arises in connection with
-High-Performance Computing (HPC) workloads.  These workloads often
-involve large data transfers and concurrent access by multiple
-clients.  In such environments, client-side caching of file data
-can introduce unpredictable latency or correctness hazards when
-data is buffered and flushed at a later time.
-
-Another aspect of such workloads is the need to support concurrent
-writers to shared files.  When application data spans a data block
-in a client cache, delayed transmission of WRITE data can result
-in clients modifying stale data and overwriting updates written by
-others.  Prompt transmission of WRITE data enables the prompt
-detection of write holes and reduces the risk of data corruption.
-
-## Implementation Guidance (Non-Normative)
-
-This section provides non-normative guidance to assist implementers in
-satisfying the requirements described above. These examples are
-illustrative and do not mandate any specific implementation approach.
-
-Clients may implement the requirement using a variety of strategies.
-For example, a client may:
-
-- Always revalidate relevant metadata via GETATTR prior to I/O, or
-- Use cached metadata but validate it using a coherency mechanism
-  such as the change attribute before reusing cached file data.
-
-The choice of mechanism is implementation-dependent, provided that
-the requirements above are satisfied.
-
-## Non-Goals
-
-This attribute does not require clients to provide strict coherency,
-does not replace existing NFS cache consistency mechanisms, and
-does not mandate any specific client implementation strategy.  It
-provides advisory guidance intended to reduce latency and correctness
-risks in selected workloads.
-
-## Uncacheable File Data {#sec_files}
-
-When a file object is marked as uncacheable file data, the attribute
-advises the client that client-side caching of file data for the
-file is unsuitable.  In particular, the client is advised to transmit
-modifications to the file promptly rather than retaining them in a
-local data cache.  Note that a client that does not query this
-attribute cannot be expected to observe the behavior described in
-this section.
-
-For uncacheable file data, the client is advised not to retain file
-data in its local data cache for the purpose of satisfying subsequent
-READ requests or delaying transmission of WRITE data.  In such
-cases, READ operations bypass the client data cache, and WRITE data
-is not retained for read-after-write satisfaction or for the purpose
-of combining multiple WRITE requests.
-
-Caching of unstably written data used to reissue WRITEs lost because
-of server failure prior to COMMIT is not affected by the advice
-provided by the uncacheable file data attribute.  This is because
-the server is made aware of the WRITE operation without the sort
-of delays introduced by write-behind caching.
-
 Suppressing read caching in addition to suppressing write-behind
-caching reduces the risk of stale-data overwrite in multi-writer
-workloads.  If a client retains cached READ data while other clients
-concurrently modify disjoint byte ranges of the same file, the
-client may perform a read-modify-write operation using stale data
-and overwrite updates written by others.  This risk exists even
-when WRITE operations are transmitted promptly.
+caching can further reduce the risk of stale-data overwrite in
+multi-writer workloads. However, in some cases read caching may
+remain appropriate, such as when the file is opened read-only or
+when a delegation ensures a consistent view of the file.
 
-Disabling READ caching allows clients to observe the most recent
-data prior to modification and reduces read-modify-write hazards
-for shared files.  This behavior is consistent with direct I/O
-semantics such as those provided by the O_DIRECT flag in Linux and
-the directio/forcedirectio mechanisms in Solaris.
+## Relationship to Direct I/O
 
-If the fattr4_uncacheable_file_data attribute is not set when a
-file is opened and is changed while the file is open, the client
-is not expected to retroactively alter its caching behavior.  A
-client may choose to flush cached data and apply the advice to
-subsequent I/O, but such behavior is not required until the file
-is closed and reopened.
-
-The presence of the uncacheable file data attribute does not
-invalidate file delegations.  A server that wishes to ensure prompt
-client I/O may choose not to issue write delegations for files
-marked as uncacheable, but clients are not required to suppress
-delegations solely due to the presence of this attribute.
+While similar in intent to O_DIRECT ({{OPEN-O_DIRECT}}) and
+forcedirectio ({{SOLARIS-FORCEDIRECTIO}}), the uncacheable file
+data attribute operates at the protocol level and is advisory.
+Clients retain flexibility in how they satisfy the requirements
+described above.
 
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
