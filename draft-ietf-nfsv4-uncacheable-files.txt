@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                           16 March 2026
-Expires: 17 September 2026
+Intended status: Standards Track                           23 March 2026
+Expires: 24 September 2026
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 September 2026.
+   This Internet-Draft will expire on 24 September 2026.
 
 Copyright Notice
 
@@ -73,8 +73,9 @@ Table of Contents
      1.1.  Definitions
      1.2.  Requirements Language
    2.  Client-Side Caching of File Data
-     2.1.  Non-Goals
-     2.2.  Uncacheable File Data
+     2.1.  Implementation Guidance (Non-Normative)
+     2.2.  Non-Goals
+     2.3.  Uncacheable File Data
    3.  Setting the Uncacheable File Data Attribute
    4.  Implementation Status
    5.  XDR for Uncacheable Attribute
@@ -196,12 +197,22 @@ Table of Contents
    attribute applies at the protocol level and therefore may influence
    client behavior beyond application-requested direct I/O semantics.
 
-   When honoring the uncacheable file data attribute, clients SHOULD
-   ensure that file-associated metadata used to make I/O decisions (such
-   as file size or timestamps) is revalidated before exposing cached
-   state to applications.  Reuse of stale metadata may otherwise lead
-   applications to make decisions based on outdated file state even when
-   file data caching itself has been suppressed.
+   When honoring the uncacheable file data attribute, clients MUST
+   ensure that cached file data is not reused without first validating
+   that the file has not changed.
+
+   At a minimum, clients MUST revalidate metadata necessary to ensure
+   correctness of cached file data, including the change attribute and
+   file size.  These attributes provide the primary mechanism for
+   detecting modification of file contents.
+
+   Clients MAY revalidate additional attributes (e.g., modification time
+   or change time) as required by their local semantics or application
+   requirements.
+
+   Failure to perform such revalidation can result in the client
+   presenting stale or inconsistent file state (e.g., incorrect size or
+   timestamps) to the application.
 
    The intent of this attribute is to allow a server or administrator to
    indicate that client-side caching of file data for a particular file
@@ -225,7 +236,24 @@ Table of Contents
    others.  Prompt transmission of WRITE data enables the prompt
    detection of write holes and reduces the risk of data corruption.
 
-2.1.  Non-Goals
+2.1.  Implementation Guidance (Non-Normative)
+
+   This section provides non-normative guidance to assist implementers
+   in satisfying the requirements described above.  These examples are
+   illustrative and do not mandate any specific implementation approach.
+
+   Clients may implement the requirement using a variety of strategies.
+   For example, a client may:
+
+   *  Always revalidate relevant metadata via GETATTR prior to I/O, or
+
+   *  Use cached metadata but validate it using a coherency mechanism
+      such as the change attribute before reusing cached file data.
+
+   The choice of mechanism is implementation-dependent, provided that
+   the requirements above are satisfied.
+
+2.2.  Non-Goals
 
    This attribute does not require clients to provide strict coherency,
    does not replace existing NFS cache consistency mechanisms, and does
@@ -233,7 +261,7 @@ Table of Contents
    advisory guidance intended to reduce latency and correctness risks in
    selected workloads.
 
-2.2.  Uncacheable File Data
+2.3.  Uncacheable File Data
 
    When a file object is marked as uncacheable file data, the attribute
    advises the client that client-side caching of file data for the file
