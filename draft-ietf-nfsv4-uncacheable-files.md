@@ -254,34 +254,37 @@ described above.
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
 The uncacheable file data attribute provides a mechanism by which
-applications that do not support O_DIRECT can request DIRECT-I/O-like
-semantics for file access.  In particular, the attribute allows a
-server to advise clients that client-side caching of file data for
-a file is unsuitable, including both read caching and write-behind
-caching.
+a server or administrator can indicate that client-side caching of
+file data for a file is unsuitable.
 
-Suppressing read caching is necessary in addition to suppressing
-write-behind caching to avoid read-modify-write hazards in multi-writer
-workloads.  If clients retain cached READ data while other clients
-concurrently modify disjoint byte ranges of the same file, stale
-cached data may be merged with new WRITE data and overwrite updates
-written by others.  This risk exists even when WRITE data is
-transmitted promptly and is not addressed by suppressing write-behind
-caching alone.
+In some deployments, applications or administrative tools may request
+that this attribute be set on a file in order to influence client
+behavior. For example, applications that require predictable data
+visibility or that would otherwise rely on mechanisms such as
+O_DIRECT may use this attribute as a protocol-visible hint to the
+server.
+
+However, the setting of this attribute is subject to server policy.
+The server is responsible for determining whether a request to set
+or clear the attribute is permitted. This may depend on factors
+such as administrative configuration, export policy, or access
+control mechanisms.
 
 One possible deployment model is for a server or administrator to
 configure a mount (see {{MOUNT}}) option such that newly created
-files under a given export are marked as uncacheable file data.  In
-such a configuration, the NFSv4.2 client could use SETATTR to set
-the fattr4_uncacheable_file_data attribute at file creation time.
+files under a given export are marked as uncacheable file data. In
+such a configuration, a client may use SETATTR to set the
+fattr4_uncacheable_file_data attribute at file creation time.
 
-This approach is conceptually similar in intent to the Solaris forcedirectio
-mount option (see {{SOLARIS-FORCEDIRECTIO}}), but differs in scope
-and visibility in that it allows DIRECT-I/O-like behavior to be
-applied without requiring changes to individual applications.
-However, unlike the Solaris option, the NFSv4.2 attribute is visible
-to all clients accessing the file and is intended to convey server-side
-knowledge or policy in a distributed environment.
+This approach is conceptually similar in intent to the Solaris
+forcedirectio mount option (see {{SOLARIS-FORCEDIRECTIO}}), but
+differs in scope and visibility in that it allows DIRECT-I/O-like
+behavior to be applied without requiring changes to individual
+applications.
+
+Unlike local mechanisms such as forcedirectio, the NFSv4.2 attribute
+is visible to all clients accessing the file and is intended to
+convey server-side knowledge or policy in a distributed environment.
 
 # Implementation Status
 
