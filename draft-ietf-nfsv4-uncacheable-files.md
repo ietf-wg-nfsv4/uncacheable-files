@@ -94,7 +94,7 @@ predictable data visibility or involve concurrent modification of
 shared files by multiple clients.
 
 In some cases, Network File System version 4.2 (NFSv4.2) (see
-{{RFC7862}})  mechanisms such as file delegations can reduce the
+{{RFC7862}}) mechanisms such as file delegations can reduce the
 impact of concurrent access.  However, delegations are not always
 available or effective, particularly for workloads with frequent
 concurrent writers or rapidly changing access patterns.
@@ -219,7 +219,7 @@ the risk of data corruption.
 The uncacheable file data attribute may also influence the use of
 read caching. Retaining cached READ data while other clients
 concurrently modify disjoint byte ranges of the same file can result
-in read-modify- write operations based on stale data.
+in read-modify-write operations based on stale data.
 
 Clients SHOULD ensure that cached file data is not reused without
 first validating that the file has not changed.
@@ -367,7 +367,7 @@ based on administrative configuration, export policy, or other
 server-defined criteria.
 
 Because the attribute is visible to and may affect the behavior of
-multiple clients, servers should consider the implications of
+multiple clients, servers SHOULD consider the implications of
 allowing unprivileged users to modify it. Inappropriate use of the
 attribute could impact performance or data access patterns for other
 clients accessing the same file.
@@ -382,7 +382,12 @@ NFSv4.2.
 
 # IANA Considerations
 
-This document has no IANA actions.
+IANA is requested to add the following entry to the NFSv4.2
+"Recommended Attributes" registry:
+
+ | Number | Name                            | Data Type | RFC      |
+ | ---
+ | 87     | fattr4_uncacheable_file_data    | bool      | RFC TBD  |
 
 --- back
 
