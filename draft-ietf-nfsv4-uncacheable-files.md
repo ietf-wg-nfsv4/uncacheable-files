@@ -382,12 +382,7 @@ NFSv4.2.
 
 # IANA Considerations
 
-IANA is requested to add the following entry to the NFSv4.2
-"Recommended Attributes" registry:
-
- | Number | Name                            | Data Type | RFC      |
- | ---
- | 87     | fattr4_uncacheable_file_data    | bool      | RFC TBD  |
+This document has no IANA actions.
 
 --- back
 
