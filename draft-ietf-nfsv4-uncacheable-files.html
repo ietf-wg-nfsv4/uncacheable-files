@@ -1059,7 +1059,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Haynes</td>
-<td class="center">Expires 24 September 2026</td>
+<td class="center">Expires 1 October 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1072,12 +1072,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-ietf-nfsv4-uncacheable-files-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-03-23" class="published">23 March 2026</time>
+<time datetime="2026-03-30" class="published">30 March 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-09-24">24 September 2026</time></dd>
+<dd class="expires"><time datetime="2026-10-01">1 October 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1133,7 +1133,7 @@ code and issues list for this draft can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 24 September 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 1 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1241,7 +1241,7 @@ workloads, they may be unsuitable for workloads that require
 predictable data visibility or involve concurrent modification of
 shared files by multiple clients.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">In some cases, Network File System version 4.2 (NFSv4.2) (see
-<span>[<a href="#RFC7862" class="cite xref">RFC7862</a>]</span>)  mechanisms such as file delegations can reduce the
+<span>[<a href="#RFC7862" class="cite xref">RFC7862</a>]</span>) mechanisms such as file delegations can reduce the
 impact of concurrent access.  However, delegations are not always
 available or effective, particularly for workloads with frequent
 concurrent writers or rapidly changing access patterns.<a href="#section-1-2" class="pilcrow">¶</a></p>
@@ -1380,7 +1380,7 @@ the risk of data corruption.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
 <p id="section-2.2-1">The uncacheable file data attribute may also influence the use of
 read caching. Retaining cached READ data while other clients
 concurrently modify disjoint byte ranges of the same file can result
-in read-modify- write operations based on stale data.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+in read-modify-write operations based on stale data.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <p id="section-2.2-2">Clients <span class="bcp14">SHOULD</span> ensure that cached file data is not reused without
 first validating that the file has not changed.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
 <p id="section-2.2-3">At a minimum, clients <span class="bcp14">MUST</span> revalidate metadata necessary to ensure
@@ -1539,7 +1539,7 @@ attribute. The ability to set or clear the attribute may be restricted
 based on administrative configuration, export policy, or other
 server-defined criteria.<a href="#section-7-2" class="pilcrow">¶</a></p>
 <p id="section-7-3">Because the attribute is visible to and may affect the behavior of
-multiple clients, servers should consider the implications of
+multiple clients, servers <span class="bcp14">SHOULD</span> consider the implications of
 allowing unprivileged users to modify it. Inappropriate use of the
 attribute could impact performance or data access patterns for other
 clients accessing the same file.<a href="#section-7-3" class="pilcrow">¶</a></p>
@@ -1556,7 +1556,27 @@ NFSv4.2.<a href="#section-7-5" class="pilcrow">¶</a></p>
       <h2 id="name-iana-considerations">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-8-1">This document has no IANA actions.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">IANA is requested to add the following entry to the NFSv4.2
+"Recommended Attributes" registry:<a href="#section-8-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+        <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+          <tr>
+            <th class="text-left" rowspan="1" colspan="1">Number</th>
+            <th class="text-left" rowspan="1" colspan="1">Name</th>
+            <th class="text-left" rowspan="1" colspan="1">Data Type</th>
+            <th class="text-left" rowspan="1" colspan="1">RFC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">87</td>
+            <td class="text-left" rowspan="1" colspan="1">fattr4_uncacheable_file_data</td>
+            <td class="text-left" rowspan="1" colspan="1">bool</td>
+            <td class="text-left" rowspan="1" colspan="1">RFC TBD</td>
+          </tr>
+        </tbody>
+      </table>
 </section>
 </div>
 <div id="sec-combined-references">
@@ -1609,7 +1629,7 @@ NFSv4.2.<a href="#section-7-5" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="I-D.haynes-nfsv4-flexfiles-v2">[I-D.haynes-nfsv4-flexfiles-v2]</dt>
         <dd>
-<span class="refAuthor">Haynes, T.</span>, <span class="refTitle">"Parallel NFS (pNFS) Flexible File Layout Version 2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-haynes-nfsv4-flexfiles-v2-02</span>, <time datetime="2025-10-20" class="refDate">20 October 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-haynes-nfsv4-flexfiles-v2-02">https://datatracker.ietf.org/doc/html/draft-haynes-nfsv4-flexfiles-v2-02</a>&gt;</span>. </dd>
+<span class="refAuthor">Haynes, T.</span>, <span class="refTitle">"Parallel NFS (pNFS) Flexible File Layout Version 2"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-haynes-nfsv4-flexfiles-v2-03</span>, <time datetime="2026-03-27" class="refDate">27 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-haynes-nfsv4-flexfiles-v2-03">https://datatracker.ietf.org/doc/html/draft-haynes-nfsv4-flexfiles-v2-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="MOUNT">[MOUNT]</dt>
         <dd>

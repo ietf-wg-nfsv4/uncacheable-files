@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                           23 March 2026
-Expires: 24 September 2026
+Intended status: Standards Track                           30 March 2026
+Expires: 1 October 2026
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 September 2026.
+   This Internet-Draft will expire on 1 October 2026.
 
 Copyright Notice
 
@@ -224,7 +224,7 @@ Table of Contents
    The uncacheable file data attribute may also influence the use of
    read caching.  Retaining cached READ data while other clients
    concurrently modify disjoint byte ranges of the same file can result
-   in read-modify- write operations based on stale data.
+   in read-modify-write operations based on stale data.
 
    Clients SHOULD ensure that cached file data is not reused without
    first validating that the file has not changed.
@@ -366,7 +366,7 @@ Table of Contents
    other server-defined criteria.
 
    Because the attribute is visible to and may affect the behavior of
-   multiple clients, servers should consider the implications of
+   multiple clients, servers SHOULD consider the implications of
    allowing unprivileged users to modify it.  Inappropriate use of the
    attribute could impact performance or data access patterns for other
    clients accessing the same file.
@@ -381,7 +381,16 @@ Table of Contents
 
 8.  IANA Considerations
 
-   This document has no IANA actions.
+   IANA is requested to add the following entry to the NFSv4.2
+   "Recommended Attributes" registry:
+
+      +========+==============================+===========+=========+
+      | Number | Name                         | Data Type | RFC     |
+      +========+==============================+===========+=========+
+      | 87     | fattr4_uncacheable_file_data | bool      | RFC TBD |
+      +--------+------------------------------+-----------+---------+
+
+                                  Table 1
 
 9.  References
 
@@ -423,9 +432,9 @@ Table of Contents
    [I-D.haynes-nfsv4-flexfiles-v2]
               Haynes, T., "Parallel NFS (pNFS) Flexible File Layout
               Version 2", Work in Progress, Internet-Draft, draft-
-              haynes-nfsv4-flexfiles-v2-02, 20 October 2025,
+              haynes-nfsv4-flexfiles-v2-03, 27 March 2026,
               <https://datatracker.ietf.org/doc/html/draft-haynes-nfsv4-
-              flexfiles-v2-02>.
+              flexfiles-v2-03>.
 
    [MOUNT]    Linux man-pages project, "mount(2) - mount filesystem",
               Linux Programmer's Manual, 2024,
