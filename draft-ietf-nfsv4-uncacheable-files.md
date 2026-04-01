@@ -270,11 +270,14 @@ or clear the attribute is permitted. This may depend on factors
 such as administrative configuration, export policy, or access
 control mechanisms.
 
+Requests that are not permitted MUST be rejected using existing
+NFSv4 error codes (e.g., NFS4ERR_INVAL or NFS4ERR_PERM).
+
 One possible deployment model is for a server or administrator to
 configure a mount (see {{MOUNT}}) option such that newly created
 files under a given export are marked as uncacheable file data. In
-such a configuration, a client may use SETATTR to set the
-fattr4_uncacheable_file_data attribute at file creation time.
+such a configuration, a client may request setting of the attribute
+at file creation time (e.g., via CREATE or OPEN createattrs).
 
 This approach is conceptually similar in intent to the Solaris
 forcedirectio mount option (see {{SOLARIS-FORCEDIRECTIO}}), but
