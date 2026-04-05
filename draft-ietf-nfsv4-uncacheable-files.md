@@ -141,7 +141,7 @@ document extend NFSv4.2 {{RFC7862}}.  They are built on top of the
 external data representation (XDR) {{RFC4506}} generated from
 {{RFC7863}}.
 
-## Definitions
+# Definitions
 
 client-side caching of file data
 
@@ -174,7 +174,7 @@ write hole
 This document assumes familiarity with the NFSv4 protocol operations,
 error codes, object types, and attributes as defined in {{RFC8881}}.
 
-## Requirements Language
+# Requirements Language
 
 {::boilerplate bcp14-tagged}
 
