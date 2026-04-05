@@ -125,8 +125,9 @@ per-file basis, and has a data type of boolean.
 Support for the uncacheable file data attribute is specific to the
 exported filesystem and may differ between filesystems served by the
 same server.  A client can determine whether the attribute is
-supported for a given file by issuing a GETATTR request and examining
-the returned attribute list.
+supported for a given file by examining the supported_attrs attribute
+for that file's filesystem or by probing support using the procedures
+described in {{RFC8178}}.
 
 The uncacheable file data attribute applies only to regular files
 (NF4REG).  Attempts to query or set this attribute on objects of
