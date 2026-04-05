@@ -241,8 +241,8 @@ or timestamps) to the application.
 Suppressing read caching in addition to suppressing write-behind
 caching can further reduce the risk of stale-data overwrite in
 multi-writer workloads. However, in some cases read caching may
-remain appropriate, such as when the file is opened read-only or
-when a delegation ensures a consistent view of the file.
+remain appropriate when another NFSv4.2 mechanism ensures a
+consistent view of the file, such as a delegation.
 
 ## Relationship to Direct I/O
 
