@@ -215,6 +215,37 @@ data and overwriting updates written by others. Prompt transmission
 of WRITE data enables the prompt detection of write holes and reduces
 the risk of data corruption.
 
+## WRITE Durability
+
+The uncacheable file data attribute does not, by itself, dictate
+the `stable_how` value a client uses on WRITE operations.  The
+protocol-level requirement is the following durability invariant:
+when the application's write call returns successfully, the WRITE
+data MUST be durable on the server.
+
+A client honoring the uncacheable file data attribute MAY satisfy
+this invariant by either:
+
+* issuing WRITEs with `stable_how` of FILE_SYNC4 or DATA_SYNC4, in
+  which case the data is durable on the WRITE response, or
+
+* issuing WRITEs with `stable_how` of UNSTABLE4 and a COMMIT that
+  completes before the application's write call returns.  If the
+  COMMIT response indicates a changed write verifier, the client
+  MUST re-issue the affected WRITEs from the application's buffer,
+  which remains available for the duration of the write call.
+
+Clients MUST NOT defer COMMIT past the point at which the
+application's write call returns, because no client-side copy of
+the WRITE data is retained beyond that point and the data could
+not otherwise be re-driven after a server reboot.
+
+The transient retention of WRITE data needed to complete an
+in-flight UNSTABLE4 and COMMIT exchange is not considered "caching"
+for the purposes of this attribute.  The attribute concerns the
+long-lived retention of file data for the purpose of satisfying
+future READs or combining future WRITEs.
+
 ## Read Caching
 
 The uncacheable file data attribute may also influence the use of
