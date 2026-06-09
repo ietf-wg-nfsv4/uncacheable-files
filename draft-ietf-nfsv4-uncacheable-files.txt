@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                            5 April 2026
-Expires: 7 October 2026
+Intended status: Standards Track                             9 June 2026
+Expires: 11 December 2026
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 October 2026.
+   This Internet-Draft will expire on 11 December 2026.
 
 Copyright Notice
 
@@ -74,8 +74,9 @@ Table of Contents
    3.  Requirements Language
    4.  Client-Side Caching of File Data
      4.1.  Write-Behind Caching
-     4.2.  Read Caching
-     4.3.  Relationship to Direct I/O
+     4.2.  WRITE Durability
+     4.3.  Read Caching
+     4.4.  Relationship to Direct I/O
    5.  Setting the Uncacheable File Data Attribute
    6.  Implementation Status
    7.  XDR for Uncacheable Attribute
@@ -220,7 +221,38 @@ Table of Contents
    WRITE data enables the prompt detection of write holes and reduces
    the risk of data corruption.
 
-4.2.  Read Caching
+4.2.  WRITE Durability
+
+   The uncacheable file data attribute does not, by itself, dictate the
+   stable_how value a client uses on WRITE operations.  The protocol-
+   level requirement is the following durability invariant: when the
+   application's write call returns successfully, the WRITE data MUST be
+   durable on the server.
+
+   A client honoring the uncacheable file data attribute MAY satisfy
+   this invariant by either:
+
+   *  issuing WRITEs with stable_how of FILE_SYNC4 or DATA_SYNC4, in
+      which case the data is durable on the WRITE response, or
+
+   *  issuing WRITEs with stable_how of UNSTABLE4 and a COMMIT that
+      completes before the application's write call returns.  If the
+      COMMIT response indicates a changed write verifier, the client
+      MUST re-issue the affected WRITEs from the application's buffer,
+      which remains available for the duration of the write call.
+
+   Clients MUST NOT defer COMMIT past the point at which the
+   application's write call returns, because no client-side copy of the
+   WRITE data is retained beyond that point and the data could not
+   otherwise be re-driven after a server reboot.
+
+   The transient retention of WRITE data needed to complete an in-flight
+   UNSTABLE4 and COMMIT exchange is not considered "caching" for the
+   purposes of this attribute.  The attribute concerns the long-lived
+   retention of file data for the purpose of satisfying future READs or
+   combining future WRITEs.
+
+4.3.  Read Caching
 
    The uncacheable file data attribute may also influence the use of
    read caching.  Retaining cached READ data while other clients
@@ -249,7 +281,7 @@ Table of Contents
    appropriate when another NFSv4.2 mechanism ensures a consistent view
    of the file, such as a delegation.
 
-4.3.  Relationship to Direct I/O
+4.4.  Relationship to Direct I/O
 
    While similar in intent to O_DIRECT ([OPEN-O_DIRECT]) and
    forcedirectio ([SOLARIS-FORCEDIRECTIO]), the uncacheable file data
@@ -437,9 +469,9 @@ Table of Contents
    [I-D.haynes-nfsv4-flexfiles-v2]
               Haynes, T., "Parallel NFS (pNFS) Flexible File Layout
               Version 2", Work in Progress, Internet-Draft, draft-
-              haynes-nfsv4-flexfiles-v2-03, 27 March 2026,
+              haynes-nfsv4-flexfiles-v2-06, 25 May 2026,
               <https://datatracker.ietf.org/doc/html/draft-haynes-nfsv4-
-              flexfiles-v2-03>.
+              flexfiles-v2-06>.
 
    [MOUNT]    Linux man-pages project, "mount(2) - mount filesystem",
               Linux Programmer's Manual, 2024,
