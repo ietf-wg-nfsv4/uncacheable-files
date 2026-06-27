@@ -66,7 +66,7 @@ document introduces a new file data caching attribute for NFSv4.2.
 Files marked with this attribute are intended to be accessed with
 client-side caching of file data suppressed, in order to support
 workloads that require predictable data visibility. This document
-extends NFSv4.2 (see RFC7862).
+extends NFSv4.2.
 
 --- note_Note_to_Readers
 
