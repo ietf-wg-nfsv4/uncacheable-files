@@ -259,7 +259,8 @@ first validating that the file has not changed.
 At a minimum, clients MUST revalidate metadata necessary to ensure
 correctness of cached file data, including the change attribute and
 file size. These attributes provide the primary mechanism for
-detecting modification of file contents.
+detecting modification of file contents. Meeting this MUST
+requirement satisfies the general SHOULD obligation above.
 
 Clients MAY revalidate additional attributes (e.g., modification
 time or change time) as required by their local semantics or
