@@ -30,7 +30,6 @@ normative:
   RFC8881:
 
 informative:
-  I-D.haynes-nfsv4-flexfiles-v2:
   MOUNT:
     title: mount(2) - mount filesystem
     target: https://man7.org/linux/man-pages/man2/mount.2.html
@@ -169,7 +168,6 @@ write hole
   data block without having a consistent view of the existing contents.
   This can result in stale data overwriting newer updates, particularly
   in environments that use erasure encoding or striped storage.
-  (Adapted from {{I-D.haynes-nfsv4-flexfiles-v2}}.)
 
 This document assumes familiarity with the NFSv4 protocol operations,
 error codes, object types, and attributes as defined in {{RFC8881}}.
