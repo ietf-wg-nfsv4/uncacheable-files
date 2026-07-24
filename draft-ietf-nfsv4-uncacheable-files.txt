@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                            27 June 2026
-Expires: 29 December 2026
+Intended status: Standards Track                            24 July 2026
+Expires: 25 January 2027
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 December 2026.
+   This Internet-Draft will expire on 25 January 2027.
 
 Copyright Notice
 
@@ -490,8 +490,8 @@ Acknowledgments
 
    Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.
 
-   Chris Inacio, Brian Pawlowski, and Gorry Fairhurst helped guide this
-   process.
+   Chris Inacio, Chuck Lever, Brian Pawlowski, and Gorry Fairhurst
+   helped guide this process.
 
 Author's Address
 
