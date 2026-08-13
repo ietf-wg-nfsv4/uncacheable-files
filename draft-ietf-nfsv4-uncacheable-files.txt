@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                            24 July 2026
-Expires: 25 January 2027
+Intended status: Standards Track                          13 August 2026
+Expires: 14 February 2027
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 January 2027.
+   This Internet-Draft will expire on 14 February 2027.
 
 Copyright Notice
 
@@ -205,7 +205,7 @@ Table of Contents
    which multiple pending WRITEs are combined and transmitted to the
    server at a later time for efficiency.
 
-   When honoring the uncacheable file data attribute, clients SHOULD NOT
+   When honoring the uncacheable file data attribute, clients MUST NOT
    delay transmission of WRITE data for the purpose of combining
    multiple WRITE operations or improving efficiency.
 
@@ -488,7 +488,8 @@ Acknowledgments
    Trond Myklebust, Mike Snitzer, Jon Flynn, Keith Mannthey, and Thomas
    Haynes all worked on the prototype at Hammerspace.
 
-   Rick Macklem, Chuck Lever, and Dave Noveck reviewed the document.
+   Rick Macklem, Chuck Lever, Dave Noveck, Barry Leiba, and Vijay
+   Gurbani reviewed the document.
 
    Chris Inacio, Chuck Lever, Brian Pawlowski, and Gorry Fairhurst
    helped guide this process.
