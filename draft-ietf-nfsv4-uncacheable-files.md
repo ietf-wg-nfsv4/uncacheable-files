@@ -196,8 +196,8 @@ The uncacheable file data attribute inhibits write-behind caching,
 in which multiple pending WRITEs are combined and transmitted to
 the server at a later time for efficiency.
 
-When honoring the uncacheable file data attribute, clients SHOULD
-NOT delay transmission of WRITE data for the purpose of combining
+When honoring the uncacheable file data attribute, clients MUST NOT
+delay transmission of WRITE data for the purpose of combining
 multiple WRITE operations or improving efficiency.
 
 One important use case for this attribute arises in connection with
