@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                          13 August 2026
-Expires: 14 February 2027
+Intended status: Standards Track                        1 September 2026
+Expires: 5 March 2027
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 February 2027.
+   This Internet-Draft will expire on 5 March 2027.
 
 Copyright Notice
 
@@ -191,13 +191,11 @@ Table of Contents
    both write-behind caching and read caching, which are addressed
    separately below.
 
-   The intent of this attribute is to allow a server or administrator to
-   indicate that client-side caching of file data for a particular file
-   is unsuitable.  The server is often in a better position than
-   individual clients to determine sharing patterns, access behavior, or
-   correctness requirements associated with a file.  By exposing this
-   information via an attribute, the server can advise clients to limit
-   file data caching in a consistent manner.
+   The server is often in a better position than individual clients to
+   determine sharing patterns, access behavior, or correctness
+   requirements associated with a file.  By exposing this information
+   via an attribute, the server can advise clients to limit file data
+   caching in a consistent manner.
 
 4.1.  Write-Behind Caching
 
@@ -208,11 +206,6 @@ Table of Contents
    When honoring the uncacheable file data attribute, clients MUST NOT
    delay transmission of WRITE data for the purpose of combining
    multiple WRITE operations or improving efficiency.
-
-   One important use case for this attribute arises in connection with
-   High-Performance Computing (HPC) workloads.  These workloads often
-   involve concurrent writers modifying disjoint byte ranges of shared
-   files.
 
    When application data spans a data block in a client cache, delayed
    transmission of WRITE data can result in clients modifying stale data
@@ -291,16 +284,12 @@ Table of Contents
 
 5.  Setting the Uncacheable File Data Attribute
 
-   The uncacheable file data attribute provides a mechanism by which a
-   server or administrator can indicate that client-side caching of file
-   data for a file is unsuitable.
-
    In some deployments, applications or administrative tools may request
-   that this attribute be set on a file in order to influence client
-   behavior.  For example, applications that require predictable data
-   visibility or that would otherwise rely on mechanisms such as
-   O_DIRECT may use this attribute as a protocol-visible hint to the
-   server.
+   that the uncacheable file data attribute be set on a file in order to
+   influence client behavior.  For example, applications that require
+   predictable data visibility or that would otherwise rely on
+   mechanisms such as O_DIRECT may use this attribute as a protocol-
+   visible hint to the server.
 
    However, the setting of this attribute is subject to server policy.
    The server is responsible for determining whether a request to set or
@@ -488,8 +477,8 @@ Acknowledgments
    Trond Myklebust, Mike Snitzer, Jon Flynn, Keith Mannthey, and Thomas
    Haynes all worked on the prototype at Hammerspace.
 
-   Rick Macklem, Chuck Lever, Dave Noveck, Barry Leiba, and Vijay
-   Gurbani reviewed the document.
+   Rick Macklem, Chuck Lever, Dave Noveck, Barry Leiba, Vijay Gurbani,
+   and Claudio Allocchio reviewed the document.
 
    Chris Inacio, Chuck Lever, Brian Pawlowski, and Gorry Fairhurst
    helped guide this process.
