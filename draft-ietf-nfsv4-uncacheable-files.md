@@ -182,13 +182,11 @@ use of client-side caching of file data for a file. This includes
 both write-behind caching and read caching, which are addressed
 separately below.
 
-The intent of this attribute is to allow a server or administrator
-to indicate that client-side caching of file data for a particular
-file is unsuitable. The server is often in a better position than
-individual clients to determine sharing patterns, access behavior,
-or correctness requirements associated with a file. By exposing
-this information via an attribute, the server can advise clients
-to limit file data caching in a consistent manner.
+The server is often in a better position than individual clients to
+determine sharing patterns, access behavior, or correctness
+requirements associated with a file. By exposing this information
+via an attribute, the server can advise clients to limit file data
+caching in a consistent manner.
 
 ## Write-Behind Caching
 
@@ -199,11 +197,6 @@ the server at a later time for efficiency.
 When honoring the uncacheable file data attribute, clients MUST NOT
 delay transmission of WRITE data for the purpose of combining
 multiple WRITE operations or improving efficiency.
-
-One important use case for this attribute arises in connection with
-High-Performance Computing (HPC) workloads. These workloads often
-involve concurrent writers modifying disjoint byte ranges of shared
-files.
 
 When application data spans a data block in a client cache, delayed
 transmission of WRITE data can result in clients modifying stale
@@ -282,16 +275,12 @@ described above.
 
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
-The uncacheable file data attribute provides a mechanism by which
-a server or administrator can indicate that client-side caching of
-file data for a file is unsuitable.
-
 In some deployments, applications or administrative tools may request
-that this attribute be set on a file in order to influence client
-behavior. For example, applications that require predictable data
-visibility or that would otherwise rely on mechanisms such as
-O_DIRECT may use this attribute as a protocol-visible hint to the
-server.
+that the uncacheable file data attribute be set on a file in order to
+influence client behavior. For example, applications that require
+predictable data visibility or that would otherwise rely on mechanisms
+such as O_DIRECT may use this attribute as a protocol-visible hint to
+the server.
 
 However, the setting of this attribute is subject to server policy.
 The server is responsible for determining whether a request to set
