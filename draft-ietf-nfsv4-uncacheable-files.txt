@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                        1 September 2026
-Expires: 5 March 2027
+Intended status: Standards Track                        2 September 2026
+Expires: 6 March 2027
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 March 2027.
+   This Internet-Draft will expire on 6 March 2027.
 
 Copyright Notice
 
@@ -138,11 +138,16 @@ Table of Contents
    described in [RFC8178].
 
    The uncacheable file data attribute applies only to regular files
-   (NF4REG).  Attempts to query or set this attribute on objects of
-   other types MUST result in an error of NFS4ERR_INVAL.  Since the
-   uncacheable file data attribute applies only to regular files,
-   attempts to apply it to other object types represent an invalid use
-   of the attribute.
+   (NF4REG).  A server that receives a GETATTR requesting this attribute
+   for an object that is not a regular file MUST return FALSE: support
+   for an attribute is advertised per file system ([RFC8881]
+   Section 5.8.1.1), so a server that supports this attribute supports
+   it for every object in that file system and owes a value for each
+   ([RFC8881] Section 18.7.3).  As with rawdev ([RFC8881]
+   Section 5.8.2.31), the value SHOULD NOT be considered useful for such
+   an object.  A server that receives a SETATTR requesting this
+   attribute on an object that is not a regular file MUST return
+   NFS4ERR_WRONG_TYPE ([RFC8881] Section 15.1.2.9).
 
    Using the process described in [RFC8178], the revisions in this
    document extend NFSv4.2 [RFC7862].  They are built on top of the
@@ -478,7 +483,7 @@ Acknowledgments
    Haynes all worked on the prototype at Hammerspace.
 
    Rick Macklem, Chuck Lever, Dave Noveck, Barry Leiba, Vijay Gurbani,
-   and Claudio Allocchio reviewed the document.
+   Claudio Allocchio, and Jamie Koehl reviewed the document.
 
    Chris Inacio, Chuck Lever, Brian Pawlowski, and Gorry Fairhurst
    helped guide this process.
