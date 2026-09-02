@@ -127,15 +127,16 @@ for that file's filesystem or by probing support using the procedures
 described in {{RFC8178}}.
 
 The uncacheable file data attribute applies only to regular files
-(NF4REG).  Support for an attribute is advertised per file system
-({{RFC8881}} Section 5.8.1.1), so a server that supports this
-attribute supports it for every object in that file system.  A
-GETATTR requesting this attribute for an object that is not a
-regular file MUST return FALSE; as with rawdev ({{RFC8881}}
-Section 5.8.2.31), the value SHOULD NOT be considered useful for
-such an object.  A server that receives a SETATTR requesting this
-attribute on an object that is not a regular file MUST return
-NFS4ERR_WRONG_TYPE.
+(NF4REG).  A server that receives a GETATTR requesting this attribute
+for an object that is not a regular file MUST return FALSE: support
+for an attribute is advertised per file system ({{RFC8881}} Section
+5.8.1.1), so a server that supports this attribute supports it for
+every object in that file system and owes a value for each
+({{RFC8881}} Section 18.7.3).  As with rawdev ({{RFC8881}} Section
+5.8.2.31), the value SHOULD NOT be considered useful for such an
+object.  A server that receives a SETATTR requesting this attribute on
+an object that is not a regular file MUST return NFS4ERR_WRONG_TYPE
+({{RFC8881}} Section 15.1.2.9).
 
 Using the process described in {{RFC8178}}, the revisions in this
 document extend NFSv4.2 {{RFC7862}}.  They are built on top of the
