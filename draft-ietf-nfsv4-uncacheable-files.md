@@ -330,8 +330,7 @@ Note to RFC Editor: please remove this section prior to publication.
 There is a prototype Hammerspace server which implements the
 uncacheable file data attribute and a prototype Linux client which
 treats the attribute as an indication to use O_DIRECT-like behavior
-for file access and to revalidate file-associated metadata before
-exposing cached state.
+for file access.
 
 For the prototype, all files created under the mount
 point have the fattr4_uncacheable_file_data set to be true.
