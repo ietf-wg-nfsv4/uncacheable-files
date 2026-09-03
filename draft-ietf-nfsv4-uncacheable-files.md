@@ -300,7 +300,7 @@ One possible deployment model is for a server or administrator to
 configure a mount (see {{MOUNT}}) option such that newly created
 files under a given export are marked as uncacheable file data. In
 such a configuration, a client may request setting of the attribute
-at file creation time (e.g., via CREATE or OPEN createattrs).
+at file creation time, via the createattrs of OPEN.
 
 This approach is conceptually similar in intent to the Solaris
 forcedirectio mount option (see {{SOLARIS-FORCEDIRECTIO}}), but
