@@ -189,10 +189,16 @@ GETATTR may retrieve the attribute and SETATTR may set it.
 
 Support for the uncacheable file data attribute is specific to the
 exported filesystem and may differ between filesystems served by the
-same server.  A client can determine whether the attribute is
-supported for a given file by examining the supported_attrs attribute
-for that file's filesystem or by probing support using the procedures
-described in {{RFC8178}}.
+same server.  A client determines whether the attribute is supported
+for a given file by the mechanism NFSv4 provides for every
+RECOMMENDED attribute: the supported_attrs attribute ({{RFC8881}}
+Section 5.8.1.1), which lists the attributes supported for all
+objects with a matching fsid, or by probing support using the
+procedures described in {{RFC8178}}.  A SETATTR that includes the
+attribute on a filesystem that does not support it fails with
+NFS4ERR_ATTRNOTSUPP ({{RFC8881}} Section 15.1.15.1); a GETATTR that
+requests it on such a filesystem simply omits it from the response,
+as NFS4ERR_ATTRNOTSUPP is never returned by GETATTR.
 
 The uncacheable file data attribute applies only to regular files,
 that is, objects of type NF4REG or NF4NAMEDATTR ({{RFC7862}} Section
