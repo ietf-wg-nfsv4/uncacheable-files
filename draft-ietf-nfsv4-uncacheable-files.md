@@ -288,7 +288,13 @@ requirement satisfies the general SHOULD obligation above.
 
 Clients MAY revalidate additional attributes (e.g., modification
 time or change time) as required by their local semantics or
-application requirements.
+application requirements.  Such attributes supplement the change
+attribute; they do not replace it.  {{RFC8881}} Section 10.3.1
+cautions that time_modify is guaranteed to change only at the
+granularity of the time_delta attribute, so a client that validated
+cached data by time_modify alone risks treating stale data as valid,
+and it requires that any cache validation approach include the
+change attribute.
 
 Failure to perform such revalidation can result in the client
 presenting stale or inconsistent file state (e.g., incorrect size
