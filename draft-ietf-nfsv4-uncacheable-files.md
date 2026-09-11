@@ -320,6 +320,14 @@ data attribute operates at the protocol level and is advisory.
 Clients retain flexibility in how they satisfy the requirements
 described above.
 
+Because the attribute is advisory, whether a client honors it, and
+what a workload gains when it does, are observed in operation rather
+than guaranteed by the protocol.  The assessment is the same as for
+O_DIRECT or forcedirectio: compare the workload with and without the
+attribute set on the files it touches.  A client that does not honor
+the attribute behaves exactly as it did before, so the comparison
+shows a difference only where the client does.
+
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
 In some deployments, applications or administrative tools may request
