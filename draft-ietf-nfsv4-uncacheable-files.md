@@ -233,7 +233,7 @@ The server is often in a better position than individual clients to
 determine sharing patterns, access behavior, or correctness
 requirements associated with a file. By exposing this information
 via an attribute, the server can advise clients to limit file data
-caching in a consistent manner.
+caching consistently.
 
 ## Write-Behind Caching
 
