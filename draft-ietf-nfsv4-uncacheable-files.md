@@ -171,6 +171,12 @@ error codes, object types, and attributes as defined in {{RFC8881}}.
 
 {::boilerplate bcp14-tagged}
 
+"RECOMMENDED" also has a second, unrelated meaning in NFSv4: it names
+the category of attributes, defined in {{RFC8881}} Section 5.2, that a
+server may or may not support, as distinct from the REQUIRED
+attributes.  This document uses the word in that sense only in
+{{sec_attribute}}, where the usage is called out.
+
 # The Uncacheable File Data Attribute {#sec_attribute}
 
 The uncacheable file data attribute, fattr4_uncacheable_file_data
