@@ -289,14 +289,14 @@ read caching. Retaining cached READ data while other clients
 concurrently modify disjoint byte ranges of the same file can result
 in read-modify-write operations based on stale data.
 
-Clients SHOULD ensure that cached file data is not reused without
+A client that retains cached file data SHOULD NOT reuse it without
 first revalidating it.
 
-At a minimum, clients MUST revalidate metadata necessary to ensure
-correctness of cached file data, including the change attribute and
-file size. These attributes provide the primary mechanism for
-detecting modification of file contents. Meeting this MUST
-requirement satisfies the general SHOULD obligation above.
+When a client revalidates cached file data, the revalidation MUST
+include the metadata necessary to ensure the correctness of that
+data: the change attribute and the file size.  These attributes
+provide the primary mechanism for detecting modification of file
+contents.
 
 Clients MAY revalidate additional attributes (e.g., modification
 time or change time) as required by their local semantics or
