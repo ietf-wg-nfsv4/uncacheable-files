@@ -29,13 +29,13 @@ normative:
 
 informative:
   MOUNT:
-    title: mount(2) - mount filesystem
-    target: https://man7.org/linux/man-pages/man2/mount.2.html
+    title: mount(8) - mount a filesystem
+    target: https://man7.org/linux/man-pages/man8/mount.8.html
     author:
-    - org: Linux man-pages project
-    date: 2024
+    - org: util-linux
+    date: 2026
     seriesinfo:
-      Linux: "Programmer's Manual"
+      Linux: "System Administration"
   OPEN-O_DIRECT:
     title: open(2) - Linux system call for opening files (O_DIRECT)
     target: https://man7.org/linux/man-pages/man2/open.2.html
