@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                        3 September 2026
-Expires: 7 March 2027
+Intended status: Standards Track                       14 September 2026
+Expires: 18 March 2027
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 March 2027.
+   This Internet-Draft will expire on 18 March 2027.
 
 Copyright Notice
 
@@ -72,20 +72,22 @@ Table of Contents
    1.  Introduction
    2.  Definitions
    3.  Requirements Language
-   4.  Client-Side Caching of File Data
-     4.1.  Write-Behind Caching
-     4.2.  WRITE Durability
-     4.3.  Read Caching
-     4.4.  Relationship to Direct I/O
-   5.  Setting the Uncacheable File Data Attribute
-   6.  Implementation Status
-   7.  XDR for Uncacheable Attribute
-   8.  Extraction of XDR
-   9.  Security Considerations
-   10. IANA Considerations
-   11. References
-     11.1.  Normative References
-     11.2.  Informative References
+   4.  The Uncacheable File Data Attribute
+   5.  Client-Side Caching of File Data
+     5.1.  Write-Behind Caching
+     5.2.  WRITE Durability
+     5.3.  Read Caching
+     5.4.  Relationship to Direct I/O
+     5.5.  Parallel NFS
+   6.  Setting the Uncacheable File Data Attribute
+   7.  Implementation Status
+   8.  XDR for Uncacheable Attribute
+   9.  Extraction of XDR
+   10. Security Considerations
+   11. IANA Considerations
+   12. References
+     12.1.  Normative References
+     12.2.  Informative References
    Acknowledgments
    Author's Address
 
@@ -121,36 +123,18 @@ Table of Contents
    and clients.
 
    This document introduces the uncacheable file data attribute to
-   NFSv4.2.  This OPTIONAL attribute allows a server to indicate that
-   client-side caching of file data for a particular file is unsuitable.
-   When both the client and the server support this attribute, the
-   client is advised to suppress client-side caching of file data for
-   that file, in accordance with the semantics defined in this document.
+   NFSv4.2.  This attribute allows a server to indicate that client-side
+   caching of file data for a particular file is unsuitable.  When both
+   the client and the server support this attribute, the client is
+   advised to suppress client-side caching of file data for that file,
+   in accordance with the semantics defined in this document.  The
+   attribute itself is specified in Section 4 and the client behavior it
+   advises in Section 5.
 
-   The uncacheable file data attribute is read-write, applies on a per-
-   file basis, and has a data type of boolean.
-
-   Support for the uncacheable file data attribute is specific to the
-   exported filesystem and may differ between filesystems served by the
-   same server.  A client can determine whether the attribute is
-   supported for a given file by examining the supported_attrs attribute
-   for that file's filesystem or by probing support using the procedures
-   described in [RFC8178].
-
-   The uncacheable file data attribute applies only to regular files
-   (NF4REG).  A server that receives a GETATTR requesting this attribute
-   for an object that is not a regular file MUST return FALSE: support
-   for an attribute is advertised per file system ([RFC8881]
-   Section 5.8.1.1), so a server that supports this attribute supports
-   it for every object in that file system and owes a value for each
-   ([RFC8881] Section 18.7.3).  As with rawdev ([RFC8881]
-   Section 5.8.2.31), the value SHOULD NOT be considered useful for such
-   an object.  A server that receives a SETATTR requesting this
-   attribute on an object that is not a regular file MUST return
-   NFS4ERR_WRONG_TYPE ([RFC8881] Section 15.1.2.9).
-
-   Using the process described in [RFC8178], the revisions in this
-   document extend NFSv4.2 [RFC7862].  They are built on top of the
+   Using the process described in [RFC8178] Section 6, this document
+   extends NFSv4.2 [RFC7862]; as that section provides, it does not
+   update [RFC7862], which remains a valid description of the base
+   variant of the minor version.  The revisions are built on top of the
    external data representation (XDR) [RFC4506] generated from
    [RFC7863].
 
@@ -178,6 +162,14 @@ Table of Contents
       newer updates, particularly in environments that use erasure
       encoding or striped storage.
 
+   revalidation  The procedure of [RFC8881] Section 10.3.1 by which a
+      client determines whether data or attributes it holds in a cache
+      are still current: the client fetches the change attribute from
+      the server, compares it with the value it cached, and, if they
+      differ, treats the cached data and attributes as invalid.  A
+      client validates data when it fetches it from the server; it
+      revalidates before reusing what it cached.
+
    This document assumes familiarity with the NFSv4 protocol operations,
    error codes, object types, and attributes as defined in [RFC8881].
 
@@ -189,7 +181,61 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-4.  Client-Side Caching of File Data
+   "RECOMMENDED" also has a second, unrelated meaning in NFSv4: it names
+   the category of attributes, defined in [RFC8881] Section 5.2, that a
+   server may or may not support, as distinct from the REQUIRED
+   attributes.  This document uses the word in that sense only in
+   Section 4, where the usage is called out.
+
+4.  The Uncacheable File Data Attribute
+
+   The uncacheable file data attribute, fattr4_uncacheable_file_data
+   (see Section 8), is a RECOMMENDED attribute for NFSv4.2, in the
+   attribute-category sense of [RFC8881] Section 5.2 and [RFC7862]
+   Section 12 rather than the BCP 14 sense; a server is not required to
+   support it.  It is read-write, applies on a per-file basis, and has a
+   data type of boolean.  Table 1 summarizes the attribute using the
+   columns of [RFC7862] Section 12.1, where "R W" indicates that GETATTR
+   may retrieve the attribute and SETATTR may set it.
+
+             +=======================+====+===========+=====+
+             | Name                  | Id | Data Type | Acc |
+             +=======================+====+===========+=====+
+             | uncacheable_file_data | 87 | bool      | R W |
+             +-----------------------+----+-----------+-----+
+
+                    Table 1: New RECOMMENDED Attribute
+
+   Support for the uncacheable file data attribute is specific to the
+   exported filesystem and may differ between filesystems served by the
+   same server.  A client determines whether the attribute is supported
+   for a given file by the mechanism NFSv4 provides for every
+   RECOMMENDED attribute: the supported_attrs attribute ([RFC8881]
+   Section 5.8.1.1), which lists the attributes supported for all
+   objects with a matching fsid, or by probing support using the
+   procedures described in [RFC8178].  A SETATTR that includes the
+   attribute on a filesystem that does not support it fails with
+   NFS4ERR_ATTRNOTSUPP ([RFC8881] Section 15.1.15.1); a GETATTR that
+   requests it on such a filesystem simply omits it from the response,
+   as NFS4ERR_ATTRNOTSUPP is never returned by GETATTR.
+
+   The uncacheable file data attribute applies only to regular files,
+   that is, objects of type NF4REG or NF4NAMEDATTR ([RFC7862]
+   Section 6.1).  A named attribute is read and written with the same
+   READ and WRITE operations as a regular file ([RFC8881] Section 5.3),
+   so a client caches its data by the same mechanism and is exposed to
+   the same hazards.  A server that receives a GETATTR requesting this
+   attribute for an object that is not a regular file MUST return FALSE:
+   support for an attribute is advertised per file system ([RFC8881]
+   Section 5.8.1.1), so a server that supports this attribute supports
+   it for every object in that file system and owes a value for each
+   ([RFC8881] Section 18.7.3).  As with rawdev ([RFC8881]
+   Section 5.8.2.31), the value SHOULD NOT be considered useful for such
+   an object.  A server that receives a SETATTR requesting this
+   attribute on an object that is not a regular file MUST return
+   NFS4ERR_WRONG_TYPE ([RFC8881] Section 15.1.2.9).
+
+5.  Client-Side Caching of File Data
 
    The uncacheable file data attribute advises the client to limit the
    use of client-side caching of file data for a file.  This includes
@@ -200,9 +246,9 @@ Table of Contents
    determine sharing patterns, access behavior, or correctness
    requirements associated with a file.  By exposing this information
    via an attribute, the server can advise clients to limit file data
-   caching in a consistent manner.
+   caching consistently.
 
-4.1.  Write-Behind Caching
+5.1.  Write-Behind Caching
 
    The uncacheable file data attribute inhibits write-behind caching, in
    which multiple pending WRITEs are combined and transmitted to the
@@ -218,7 +264,7 @@ Table of Contents
    WRITE data enables the prompt detection of write holes and reduces
    the risk of data corruption.
 
-4.2.  WRITE Durability
+5.2.  WRITE Durability
 
    The uncacheable file data attribute does not, by itself, dictate the
    stable_how value a client uses on WRITE operations.  The protocol-
@@ -249,25 +295,30 @@ Table of Contents
    retention of file data for the purpose of satisfying future READs or
    combining future WRITEs.
 
-4.3.  Read Caching
+5.3.  Read Caching
 
    The uncacheable file data attribute may also influence the use of
    read caching.  Retaining cached READ data while other clients
    concurrently modify disjoint byte ranges of the same file can result
    in read-modify-write operations based on stale data.
 
-   Clients SHOULD ensure that cached file data is not reused without
-   first validating that the file has not changed.
+   A client that retains cached file data SHOULD NOT reuse it without
+   first revalidating it.
 
-   At a minimum, clients MUST revalidate metadata necessary to ensure
-   correctness of cached file data, including the change attribute and
-   file size.  These attributes provide the primary mechanism for
-   detecting modification of file contents.  Meeting this MUST
-   requirement satisfies the general SHOULD obligation above.
+   When a client revalidates cached file data, the revalidation MUST
+   include the metadata necessary to ensure the correctness of that
+   data: the change attribute and the file size.  These attributes
+   provide the primary mechanism for detecting modification of file
+   contents.
 
    Clients MAY revalidate additional attributes (e.g., modification time
    or change time) as required by their local semantics or application
-   requirements.
+   requirements.  Such attributes supplement the change attribute; they
+   do not replace it.  [RFC8881] Section 10.3.1 cautions that
+   time_modify is guaranteed to change only at the granularity of the
+   time_delta attribute, so a client that validated cached data by
+   time_modify alone risks treating stale data as valid, and it requires
+   that any cache validation approach include the change attribute.
 
    Failure to perform such revalidation can result in the client
    presenting stale or inconsistent file state (e.g., incorrect size or
@@ -279,7 +330,7 @@ Table of Contents
    appropriate when another NFSv4.2 mechanism ensures a consistent view
    of the file, such as a delegation.
 
-4.4.  Relationship to Direct I/O
+5.4.  Relationship to Direct I/O
 
    While similar in intent to O_DIRECT ([OPEN-O_DIRECT]) and
    forcedirectio ([SOLARIS-FORCEDIRECTIO]), the uncacheable file data
@@ -287,7 +338,34 @@ Table of Contents
    retain flexibility in how they satisfy the requirements described
    above.
 
-5.  Setting the Uncacheable File Data Attribute
+   Because the attribute is advisory, whether a client honors it, and
+   what a workload gains when it does, are observed in operation rather
+   than guaranteed by the protocol.  The assessment is the same as for
+   O_DIRECT or forcedirectio: compare the workload with and without the
+   attribute set on the files it touches.  A client that does not honor
+   the attribute behaves exactly as it did before, so the comparison
+   shows a difference only where the client does.
+
+5.5.  Parallel NFS
+
+   The uncacheable file data attribute is an attribute of the file, and
+   a pNFS client ([RFC8881] Section 12) obtains it from the metadata
+   server as it does every other attribute of the file.  The attribute
+   governs the client's caching of the file's data regardless of which
+   server that data is read from or written to: file data obtained
+   through a layout from a storage device is the same file data, and a
+   client honoring the attribute treats it exactly as it treats data
+   obtained by READ and WRITE sent to the metadata server.
+
+   A client honoring the attribute satisfies the durability invariant of
+   Section 5.2 for data written through a layout by the same two means,
+   applied to the storage device: a WRITE with stable_how of FILE_SYNC4
+   or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT to that
+   storage device before the application's write call returns.  The
+   client revalidates the change attribute and size, as Section 5.3
+   requires, at the metadata server.
+
+6.  Setting the Uncacheable File Data Attribute
 
    In some deployments, applications or administrative tools may request
    that the uncacheable file data attribute be set on a file in order to
@@ -305,6 +383,12 @@ Table of Contents
    Requests that are not permitted MUST be rejected using existing NFSv4
    error codes (e.g., NFS4ERR_INVAL or NFS4ERR_PERM).
 
+   This document does not require a server to implement any particular
+   policy, nor any particular means of configuring one.  A server that
+   always permits, or always refuses, requests to set or clear the
+   attribute conforms to this document; what the protocol requires is
+   only the error returned when a request is refused.
+
    One possible deployment model is for a server or administrator to
    configure a mount (see [MOUNT]) option such that newly created files
    under a given export are marked as uncacheable file data.  In such a
@@ -320,17 +404,18 @@ Table of Contents
    is visible to all clients accessing the file and is intended to
    convey server-side knowledge or policy in a distributed environment.
 
-   Changes to the uncacheable file data attribute while a file is
-   actively in use may not be immediately reflected in client behavior.
-   A client that has already opened a file MAY continue to operate based
-   on its existing caching behavior and is not required to immediately
-   alter its behavior in response to a change in the attribute.
+   A change to the attribute while a file is in use is not reflected in
+   client behavior immediately.  A client that has the file open when
+   the attribute changes MAY continue with the caching behavior it chose
+   when it opened the file, for as long as that open lasts.  Two
+   ordinary mechanisms bound the delay: the client's cached attributes
+   for the file expire under the upper time boundary described in
+   [RFC8881] Section 10.6, and a client revalidating cached file data
+   (Section 5.3) fetches the change attribute, which moves when a server
+   sets or clears this one.  A client that has observed the new value
+   applies it to subsequent OPENs of the file.
 
-   Clients are expected to observe attribute changes through normal
-   NFSv4 mechanisms (e.g., GETATTR or revalidation) and apply updated
-   behavior as appropriate for subsequent operations.
-
-6.  Implementation Status
+7.  Implementation Status
 
    Note to RFC Editor: please remove this section prior to publication.
 
@@ -349,7 +434,7 @@ Table of Contents
    improve performance in many cases, while also reducing memory
    pressure and CPU utilization in the NFS client.
 
-7.  XDR for Uncacheable Attribute
+8.  XDR for Uncacheable Attribute
 
    ///
    /// typedef bool            fattr4_uncacheable_file_data;
@@ -357,7 +442,7 @@ Table of Contents
    /// const FATTR4_UNCACHEABLE_FILE_DATA       = 87;
    ///
 
-8.  Extraction of XDR
+9.  Extraction of XDR
 
    This document contains the external data representation (XDR)
    [RFC4506] description of the uncacheable file attribute.  The XDR
@@ -390,7 +475,7 @@ Table of Contents
    snippets should be placed in their appropriate sections within the
    existing XDR.
 
-9.  Security Considerations
+10.  Security Considerations
 
    The uncacheable file data attribute does not introduce new
    authentication or authorization mechanisms and does not alter
@@ -418,13 +503,13 @@ Table of Contents
    consistency mechanisms or data integrity protections provided by
    NFSv4.2.
 
-10.  IANA Considerations
+11.  IANA Considerations
 
    This document has no IANA actions.
 
-11.  References
+12.  References
 
-11.1.  Normative References
+12.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -457,11 +542,11 @@ Table of Contents
               DOI 10.17487/RFC8881, August 2020,
               <https://www.rfc-editor.org/rfc/rfc8881>.
 
-11.2.  Informative References
+12.2.  Informative References
 
-   [MOUNT]    Linux man-pages project, "mount(2) - mount filesystem",
-              Linux Programmer's Manual, 2024,
-              <https://man7.org/linux/man-pages/man2/mount.2.html>.
+   [MOUNT]    util-linux, "mount(8) - mount a filesystem", Linux System
+              Administration, 2026,
+              <https://man7.org/linux/man-pages/man8/mount.8.html>.
 
    [OPEN-O_DIRECT]
               Linux man-pages project, "open(2) - Linux system call for
