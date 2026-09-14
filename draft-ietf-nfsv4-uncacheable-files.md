@@ -393,16 +393,16 @@ Unlike local mechanisms such as forcedirectio, the NFSv4.2 attribute
 is visible to all clients accessing the file and is intended to
 convey server-side knowledge or policy in a distributed environment.
 
-Changes to the uncacheable file data attribute while a file is
-actively in use may not be immediately reflected in client behavior.
-A client that has already opened a file MAY continue to operate
-based on its existing caching behavior and is not required to
-immediately alter its behavior in response to a change in the
-attribute.
-
-Clients are expected to observe attribute changes through normal
-NFSv4 mechanisms (e.g., GETATTR or revalidation) and apply updated
-behavior as appropriate for subsequent operations.
+A change to the attribute while a file is in use is not reflected in
+client behavior immediately.  A client that has the file open when
+the attribute changes MAY continue with the caching behavior it
+chose when it opened the file, for as long as that open lasts.  Two
+ordinary mechanisms bound the delay: the client's cached attributes
+for the file expire under the upper time boundary described in
+{{RFC8881}} Section 10.6, and a client revalidating cached file data
+({{sec_read_caching}}) fetches the change attribute, which moves when
+a server sets or clears this one.  A client that has observed the
+new value applies it to subsequent OPENs of the file.
 
 # Implementation Status
 
