@@ -28,6 +28,7 @@ normative:
   RFC8881:
 
 informative:
+  RFC8435:
   MOUNT:
     title: mount(8) - mount a filesystem
     target: https://man7.org/linux/man-pages/man8/mount.8.html
@@ -352,6 +353,23 @@ FILE_SYNC4 or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT
 to that storage device before the application's write call returns.
 The client revalidates the change attribute and size, as
 {{sec_read_caching}} requires, at the metadata server.
+
+Whether the metadata server's change attribute and size reflect a
+write to a storage device before the writer sends LAYOUTCOMMIT
+depends on the layout type and the control protocol ({{RFC8881}}
+Section 12.5.4); a layout may say that LAYOUTCOMMIT is not required
+at all (for example, FF_FLAGS_NO_LAYOUTCOMMIT in {{RFC8435}} Section
+5.1), in which case nothing further is needed.  Where LAYOUTCOMMIT
+is required, a client that revalidates at the metadata server
+between another client's WRITE and that client's LAYOUTCOMMIT
+observes the earlier values: the hazard that write-behind caching
+creates, and that this attribute exists to remove.  A client
+honoring the attribute therefore SHOULD send LAYOUTCOMMIT promptly
+after the WRITE and COMMIT that made its data durable, rather than
+deferring it to CLOSE as {{RFC8881}} Section 13.10 describes for
+close-to-open semantics.  For as long as a client defers
+LAYOUTCOMMIT, other clients cannot detect its writes by
+revalidation.
 
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
