@@ -245,7 +245,7 @@ data and overwriting updates written by others. Prompt transmission
 of WRITE data enables the prompt detection of write holes and reduces
 the risk of data corruption.
 
-## WRITE Durability
+## WRITE Durability {#sec_durability}
 
 The uncacheable file data attribute does not, by itself, dictate
 the `stable_how` value a client uses on WRITE operations.  The
@@ -276,7 +276,7 @@ for the purposes of this attribute.  The attribute concerns the
 long-lived retention of file data for the purpose of satisfying
 future READs or combining future WRITEs.
 
-## Read Caching
+## Read Caching {#sec_read_caching}
 
 The uncacheable file data attribute may also influence the use of
 read caching. Retaining cached READ data while other clients
@@ -327,6 +327,25 @@ O_DIRECT or forcedirectio: compare the workload with and without the
 attribute set on the files it touches.  A client that does not honor
 the attribute behaves exactly as it did before, so the comparison
 shows a difference only where the client does.
+
+## Parallel NFS {#sec_pnfs}
+
+The uncacheable file data attribute is an attribute of the file, and
+a pNFS client ({{RFC8881}} Section 12) obtains it from the metadata
+server as it does every other attribute of the file.  The attribute
+governs the client's caching of the file's data regardless of which
+server that data is read from or written to: file data obtained
+through a layout from a storage device is the same file data, and a
+client honoring the attribute treats it exactly as it treats data
+obtained by READ and WRITE sent to the metadata server.
+
+A client honoring the attribute satisfies the durability invariant
+of {{sec_durability}} for data written through a layout by the same
+two means, applied to the storage device: a WRITE with stable_how of
+FILE_SYNC4 or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT
+to that storage device before the application's write call returns.
+The client revalidates the change attribute and size, as
+{{sec_read_caching}} requires, at the metadata server.
 
 # Setting the Uncacheable File Data Attribute {#sec_setting}
 
