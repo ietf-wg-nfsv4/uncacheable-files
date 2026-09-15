@@ -255,7 +255,7 @@ the risk of data corruption.
 ## WRITE Durability {#sec_durability}
 
 The uncacheable file data attribute does not, by itself, dictate
-the `stable_how` value a client uses on WRITE operations.  The
+the `stable_how4` value a client uses on WRITE operations.  The
 protocol-level requirement is the following durability invariant:
 when the application's write call returns successfully, the WRITE
 data MUST be durable on the server.
@@ -263,10 +263,10 @@ data MUST be durable on the server.
 A client honoring the uncacheable file data attribute MAY satisfy
 this invariant by either:
 
-* issuing WRITEs with `stable_how` of FILE_SYNC4 or DATA_SYNC4, in
+* issuing WRITEs with `stable_how4` of FILE_SYNC4 or DATA_SYNC4, in
   which case the data is durable on the WRITE response, or
 
-* issuing WRITEs with `stable_how` of UNSTABLE4 and a COMMIT that
+* issuing WRITEs with `stable_how4` of UNSTABLE4 and a COMMIT that
   completes before the application's write call returns.  If the
   COMMIT response indicates a changed write verifier, the client
   MUST re-issue the affected WRITEs from the application's buffer,
@@ -348,7 +348,7 @@ obtained by READ and WRITE sent to the metadata server.
 
 A client honoring the attribute satisfies the durability invariant
 of {{sec_durability}} for data written through a layout by the same
-two means, applied to the storage device: a WRITE with stable_how of
+two means, applied to the storage device: a WRITE with stable_how4 of
 FILE_SYNC4 or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT
 to that storage device before the application's write call returns.
 The client revalidates the change attribute and size, as
@@ -534,7 +534,9 @@ Trond Myklebust, Mike Snitzer, Jon Flynn, Keith Mannthey, and Thomas
 Haynes all worked on the prototype at Hammerspace.
 
 Rick Macklem, Chuck Lever, Dave Noveck, Barry Leiba, Vijay Gurbani,
-Claudio Allocchio, and Jamie Koehl reviewed the document.
+Claudio Allocchio, and Jamie Koehl reviewed the document.  Éric
+Vyncke, Ketan Talaulikar, Mohamed Boucadair, Mike Bishop, and Mahesh
+Jethanandani reviewed it for the IESG.
 
 Chris Inacio, Chuck Lever, Brian Pawlowski, and Gorry Fairhurst
 helped guide this process.
