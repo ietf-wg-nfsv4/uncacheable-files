@@ -1055,7 +1055,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Haynes</td>
-<td class="center">Expires 18 March 2027</td>
+<td class="center">Expires 19 March 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-ietf-nfsv4-uncacheable-files-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-14" class="published">14 September 2026</time>
+<time datetime="2026-09-15" class="published">15 September 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-18">18 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-03-19">19 March 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1129,7 +1129,7 @@ code and issues list for this draft can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 18 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 19 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1448,7 +1448,7 @@ the risk of data corruption.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-write-durability" class="section-name selfRef">WRITE Durability</a>
         </h3>
 <p id="section-5.2-1">The uncacheable file data attribute does not, by itself, dictate
-the <code>stable_how</code> value a client uses on WRITE operations.  The
+the <code>stable_how4</code> value a client uses on WRITE operations.  The
 protocol-level requirement is the following durability invariant:
 when the application's write call returns successfully, the WRITE
 data <span class="bcp14">MUST</span> be durable on the server.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
@@ -1456,11 +1456,11 @@ data <span class="bcp14">MUST</span> be durable on the server.<a href="#section-
 this invariant by either:<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-3.1">
-            <p id="section-5.2-3.1.1">issuing WRITEs with <code>stable_how</code> of FILE_SYNC4 or DATA_SYNC4, in
+            <p id="section-5.2-3.1.1">issuing WRITEs with <code>stable_how4</code> of FILE_SYNC4 or DATA_SYNC4, in
 which case the data is durable on the WRITE response, or<a href="#section-5.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-3.2">
-            <p id="section-5.2-3.2.1">issuing WRITEs with <code>stable_how</code> of UNSTABLE4 and a COMMIT that
+            <p id="section-5.2-3.2.1">issuing WRITEs with <code>stable_how4</code> of UNSTABLE4 and a COMMIT that
 completes before the application's write call returns.  If the
 COMMIT response indicates a changed write verifier, the client
 <span class="bcp14">MUST</span> re-issue the affected WRITEs from the application's buffer,
@@ -1547,11 +1547,27 @@ client honoring the attribute treats it exactly as it treats data
 obtained by READ and WRITE sent to the metadata server.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
 <p id="section-5.5-2">A client honoring the attribute satisfies the durability invariant
 of <a href="#sec_durability" class="auto internal xref">Section 5.2</a> for data written through a layout by the same
-two means, applied to the storage device: a WRITE with stable_how of
+two means, applied to the storage device: a WRITE with stable_how4 of
 FILE_SYNC4 or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT
 to that storage device before the application's write call returns.
 The client revalidates the change attribute and size, as
 <a href="#sec_read_caching" class="auto internal xref">Section 5.3</a> requires, at the metadata server.<a href="#section-5.5-2" class="pilcrow">¶</a></p>
+<p id="section-5.5-3">Whether the metadata server's change attribute and size reflect a
+write to a storage device before the writer sends LAYOUTCOMMIT
+depends on the layout type and the control protocol (<span>[<a href="#RFC8881" class="cite xref">RFC8881</a>]</span>
+Section 12.5.4); a layout may say that LAYOUTCOMMIT is not required
+at all (for example, FF_FLAGS_NO_LAYOUTCOMMIT in <span>[<a href="#RFC8435" class="cite xref">RFC8435</a>]</span> Section
+5.1), in which case nothing further is needed.  Where LAYOUTCOMMIT
+is required, a client that revalidates at the metadata server
+between another client's WRITE and that client's LAYOUTCOMMIT
+observes the earlier values: the hazard that write-behind caching
+creates, and that this attribute exists to remove.  A client
+honoring the attribute therefore <span class="bcp14">SHOULD</span> send LAYOUTCOMMIT promptly
+after the WRITE and COMMIT that made its data durable, rather than
+deferring it to CLOSE as <span>[<a href="#RFC8881" class="cite xref">RFC8881</a>]</span> Section 13.10 describes for
+close-to-open semantics.  For as long as a client defers
+LAYOUTCOMMIT, other clients cannot detect its writes by
+revalidation.<a href="#section-5.5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1572,8 +1588,14 @@ The server is responsible for determining whether a request to set
 or clear the attribute is permitted. This may depend on factors
 such as administrative configuration, export policy, or access
 control mechanisms.<a href="#section-6-2" class="pilcrow">¶</a></p>
-<p id="section-6-3">Requests that are not permitted <span class="bcp14">MUST</span> be rejected using existing
-NFSv4 error codes (e.g., NFS4ERR_INVAL or NFS4ERR_PERM).<a href="#section-6-3" class="pilcrow">¶</a></p>
+<p id="section-6-3">Requests that are not permitted <span class="bcp14">MUST</span> be rejected with NFS4ERR_ACCESS
+(<span>[<a href="#RFC8881" class="cite xref">RFC8881</a>]</span> Section 15.1.6.1) or, where the refusal is because the
+requester is neither the owner nor a privileged user, NFS4ERR_PERM
+(<span>[<a href="#RFC8881" class="cite xref">RFC8881</a>]</span> Section 15.1.6.2).  A server that supports the attribute
+<span class="bcp14">MUST NOT</span> refuse such a request with NFS4ERR_INVAL: <span>[<a href="#RFC8178" class="cite xref">RFC8178</a>]</span>
+Section 4.4.3 reserves that response to a SETATTR of the attribute
+for a server with no knowledge of it, and a client probing for
+support would take the refusal as ignorance.<a href="#section-6-3" class="pilcrow">¶</a></p>
 <p id="section-6-4">This document does not require a server to implement any particular
 policy, nor any particular means of configuring one.  A server that
 always permits, or always refuses, requests to set or clear the
@@ -1770,6 +1792,10 @@ NFSv4.2.<a href="#section-10-5" class="pilcrow">¶</a></p>
         <dd>
 <span class="refAuthor">Linux man-pages project</span>, <span class="refTitle">"open(2) - Linux system call for opening files (O_DIRECT)"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://man7.org/linux/man-pages/man2/open.2.html">https://man7.org/linux/man-pages/man2/open.2.html</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC8435">[RFC8435]</dt>
+        <dd>
+<span class="refAuthor">Halevy, B.</span> and <span class="refAuthor">T. Haynes</span>, <span class="refTitle">"Parallel NFS (pNFS) Flexible File Layout"</span>, <span class="seriesInfo">RFC 8435</span>, <span class="seriesInfo">DOI 10.17487/RFC8435</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8435">https://www.rfc-editor.org/rfc/rfc8435</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="SOLARIS-FORCEDIRECTIO">[SOLARIS-FORCEDIRECTIO]</dt>
       <dd>
 <span class="refAuthor">Oracle Solaris Documentation</span>, <span class="refTitle">"mount -o forcedirectio - Solaris forcedirectio mount option"</span>, <span class="seriesInfo">Solaris Administration Guide</span>, <time datetime="2023" class="refDate">2023</time>, <span>&lt;<a href="https://docs.oracle.com/en/operating-systems/solaris/oracle-solaris/11.4/manage-nfs/mount-options-for-nfs-file-systems.html">https://docs.oracle.com/en/operating-systems/solaris/oracle-solaris/11.4/manage-nfs/mount-options-for-nfs-file-systems.html</a>&gt;</span>. </dd>
@@ -1787,7 +1813,9 @@ NFSv4.2.<a href="#section-10-5" class="pilcrow">¶</a></p>
 <p id="appendix-A-1">Trond Myklebust, Mike Snitzer, Jon Flynn, Keith Mannthey, and Thomas
 Haynes all worked on the prototype at Hammerspace.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
 <p id="appendix-A-2">Rick Macklem, Chuck Lever, Dave Noveck, Barry Leiba, Vijay Gurbani,
-Claudio Allocchio, and Jamie Koehl reviewed the document.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+Claudio Allocchio, and Jamie Koehl reviewed the document.  Éric
+Vyncke, Ketan Talaulikar, Mohamed Boucadair, Mike Bishop, and Mahesh
+Jethanandani reviewed it for the IESG.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
 <p id="appendix-A-3">Chris Inacio, Chuck Lever, Brian Pawlowski, and Gorry Fairhurst
 helped guide this process.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
 </section>

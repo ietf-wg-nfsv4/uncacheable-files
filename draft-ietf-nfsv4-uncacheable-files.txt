@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                       14 September 2026
-Expires: 18 March 2027
+Intended status: Standards Track                       15 September 2026
+Expires: 19 March 2027
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 March 2027.
+   This Internet-Draft will expire on 19 March 2027.
 
 Copyright Notice
 
@@ -267,7 +267,7 @@ Table of Contents
 5.2.  WRITE Durability
 
    The uncacheable file data attribute does not, by itself, dictate the
-   stable_how value a client uses on WRITE operations.  The protocol-
+   stable_how4 value a client uses on WRITE operations.  The protocol-
    level requirement is the following durability invariant: when the
    application's write call returns successfully, the WRITE data MUST be
    durable on the server.
@@ -275,10 +275,10 @@ Table of Contents
    A client honoring the uncacheable file data attribute MAY satisfy
    this invariant by either:
 
-   *  issuing WRITEs with stable_how of FILE_SYNC4 or DATA_SYNC4, in
+   *  issuing WRITEs with stable_how4 of FILE_SYNC4 or DATA_SYNC4, in
       which case the data is durable on the WRITE response, or
 
-   *  issuing WRITEs with stable_how of UNSTABLE4 and a COMMIT that
+   *  issuing WRITEs with stable_how4 of UNSTABLE4 and a COMMIT that
       completes before the application's write call returns.  If the
       COMMIT response indicates a changed write verifier, the client
       MUST re-issue the affected WRITEs from the application's buffer,
@@ -359,11 +359,27 @@ Table of Contents
 
    A client honoring the attribute satisfies the durability invariant of
    Section 5.2 for data written through a layout by the same two means,
-   applied to the storage device: a WRITE with stable_how of FILE_SYNC4
+   applied to the storage device: a WRITE with stable_how4 of FILE_SYNC4
    or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT to that
    storage device before the application's write call returns.  The
    client revalidates the change attribute and size, as Section 5.3
    requires, at the metadata server.
+
+   Whether the metadata server's change attribute and size reflect a
+   write to a storage device before the writer sends LAYOUTCOMMIT
+   depends on the layout type and the control protocol ([RFC8881]
+   Section 12.5.4); a layout may say that LAYOUTCOMMIT is not required
+   at all (for example, FF_FLAGS_NO_LAYOUTCOMMIT in [RFC8435]
+   Section 5.1), in which case nothing further is needed.  Where
+   LAYOUTCOMMIT is required, a client that revalidates at the metadata
+   server between another client's WRITE and that client's LAYOUTCOMMIT
+   observes the earlier values: the hazard that write-behind caching
+   creates, and that this attribute exists to remove.  A client honoring
+   the attribute therefore SHOULD send LAYOUTCOMMIT promptly after the
+   WRITE and COMMIT that made its data durable, rather than deferring it
+   to CLOSE as [RFC8881] Section 13.10 describes for close-to-open
+   semantics.  For as long as a client defers LAYOUTCOMMIT, other
+   clients cannot detect its writes by revalidation.
 
 6.  Setting the Uncacheable File Data Attribute
 
@@ -380,8 +396,14 @@ Table of Contents
    administrative configuration, export policy, or access control
    mechanisms.
 
-   Requests that are not permitted MUST be rejected using existing NFSv4
-   error codes (e.g., NFS4ERR_INVAL or NFS4ERR_PERM).
+   Requests that are not permitted MUST be rejected with NFS4ERR_ACCESS
+   ([RFC8881] Section 15.1.6.1) or, where the refusal is because the
+   requester is neither the owner nor a privileged user, NFS4ERR_PERM
+   ([RFC8881] Section 15.1.6.2).  A server that supports the attribute
+   MUST NOT refuse such a request with NFS4ERR_INVAL: [RFC8178]
+   Section 4.4.3 reserves that response to a SETATTR of the attribute
+   for a server with no knowledge of it, and a client probing for
+   support would take the refusal as ignorance.
 
    This document does not require a server to implement any particular
    policy, nor any particular means of configuring one.  A server that
@@ -553,6 +575,10 @@ Table of Contents
               opening files (O_DIRECT)", 2024,
               <https://man7.org/linux/man-pages/man2/open.2.html>.
 
+   [RFC8435]  Halevy, B. and T. Haynes, "Parallel NFS (pNFS) Flexible
+              File Layout", RFC 8435, DOI 10.17487/RFC8435, August 2018,
+              <https://www.rfc-editor.org/rfc/rfc8435>.
+
    [SOLARIS-FORCEDIRECTIO]
               Oracle Solaris Documentation, "mount -o forcedirectio -
               Solaris forcedirectio mount option",
@@ -567,7 +593,9 @@ Acknowledgments
    Haynes all worked on the prototype at Hammerspace.
 
    Rick Macklem, Chuck Lever, Dave Noveck, Barry Leiba, Vijay Gurbani,
-   Claudio Allocchio, and Jamie Koehl reviewed the document.
+   Claudio Allocchio, and Jamie Koehl reviewed the document.  Éric
+   Vyncke, Ketan Talaulikar, Mohamed Boucadair, Mike Bishop, and Mahesh
+   Jethanandani reviewed it for the IESG.
 
    Chris Inacio, Chuck Lever, Brian Pawlowski, and Gorry Fairhurst
    helped guide this process.
