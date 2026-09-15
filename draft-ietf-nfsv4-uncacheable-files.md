@@ -28,6 +28,8 @@ normative:
   RFC8881:
 
 informative:
+  RFC5663:
+  RFC8154:
   POSIX:
     title: "IEEE Standard for Information Technology--Portable Operating System Interface (POSIX) Base Specifications, Issue 8"
     author:
@@ -356,12 +358,21 @@ client honoring the attribute treats it exactly as it treats data
 obtained by READ and WRITE sent to the metadata server.
 
 A client honoring the attribute satisfies the durability invariant
-of {{sec_durability}} for data written through a layout by the same
-two means, applied to the storage device: a WRITE with stable_how4 of
+of {{sec_durability}} for data written through a layout before the
+application's write call returns, by whatever means the layout
+type's storage protocol provides.  Where that protocol is NFS, as
+for the file layout ({{RFC8881}} Section 13) and the flexible file
+layout ({{RFC8435}}), the means are those of {{sec_durability}}
+applied to the storage device: a WRITE with stable_how4 of
 FILE_SYNC4 or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT
-to that storage device before the application's write call returns.
-The client revalidates the change attribute and size, as
-{{sec_read_caching}} requires, at the metadata server.
+to that storage device.  Where it is not, as for the block
+({{RFC5663}}) and SCSI ({{RFC8154}}) layouts, the storage protocol's
+own means of committing a write to stable storage serves;
+{{RFC8154}} Section 2.8, for example, has the server flush a volatile
+write cache before LAYOUTCOMMIT returns, so that for such a layout
+LAYOUTCOMMIT is itself the durability step.  The client revalidates
+the change attribute and size, as {{sec_read_caching}} requires, at
+the metadata server.
 
 Whether the metadata server's change attribute and size reflect a
 write to a storage device before the writer sends LAYOUTCOMMIT
