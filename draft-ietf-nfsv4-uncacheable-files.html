@@ -1671,7 +1671,8 @@ pressure and CPU utilization in the NFS client.<a href="#section-7-4" class="pil
 <span>[<a href="#RFC4506" class="cite xref">RFC4506</a>]</span> description of the uncacheable file attribute.  The XDR
 description is presented in a manner that facilitates easy extraction
 into a ready-to-compile format. To extract the machine-readable XDR
-description, use the following shell script:<a href="#section-9-1" class="pilcrow">¶</a></p>
+description, use the following shell script, which relies on the sh, grep,
+and sed utilities as specified by <span>[<a href="#POSIX" class="cite xref">POSIX</a>]</span>:<a href="#section-9-1" class="pilcrow">¶</a></p>
 <div class="lang-shell sourcecode" id="section-9-2">
 <pre>
 &lt;CODE BEGINS&gt;
@@ -1791,6 +1792,10 @@ NFSv4.2.<a href="#section-10-5" class="pilcrow">¶</a></p>
 <dt id="OPEN-O_DIRECT">[OPEN-O_DIRECT]</dt>
         <dd>
 <span class="refAuthor">Linux man-pages project</span>, <span class="refTitle">"open(2) - Linux system call for opening files (O_DIRECT)"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://man7.org/linux/man-pages/man2/open.2.html">https://man7.org/linux/man-pages/man2/open.2.html</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="POSIX">[POSIX]</dt>
+        <dd>
+<span class="refAuthor">IEEE</span> and <span class="refAuthor">The Open Group</span>, <span class="refTitle">"IEEE Standard for Information Technology--Portable Operating System Interface (POSIX) Base Specifications, Issue 8"</span>, <span class="seriesInfo">IEEE Std 1003.1-2024</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://standards.ieee.org/ieee/1003.1/7700/">https://standards.ieee.org/ieee/1003.1/7700/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8435">[RFC8435]</dt>
         <dd>

@@ -470,7 +470,8 @@ Table of Contents
    [RFC4506] description of the uncacheable file attribute.  The XDR
    description is presented in a manner that facilitates easy extraction
    into a ready-to-compile format.  To extract the machine-readable XDR
-   description, use the following shell script:
+   description, use the following shell script, which relies on the sh,
+   grep, and sed utilities as specified by [POSIX]:
 
    <CODE BEGINS>
    #!/bin/sh
@@ -574,6 +575,11 @@ Table of Contents
               Linux man-pages project, "open(2) - Linux system call for
               opening files (O_DIRECT)", 2024,
               <https://man7.org/linux/man-pages/man2/open.2.html>.
+
+   [POSIX]    IEEE and The Open Group, "IEEE Standard for Information
+              Technology--Portable Operating System Interface (POSIX)
+              Base Specifications, Issue 8", IEEE Std 1003.1-2024, 2024,
+              <https://standards.ieee.org/ieee/1003.1/7700/>.
 
    [RFC8435]  Halevy, B. and T. Haynes, "Parallel NFS (pNFS) Flexible
               File Layout", RFC 8435, DOI 10.17487/RFC8435, August 2018,
