@@ -386,8 +386,14 @@ or clear the attribute is permitted. This may depend on factors
 such as administrative configuration, export policy, or access
 control mechanisms.
 
-Requests that are not permitted MUST be rejected using existing
-NFSv4 error codes (e.g., NFS4ERR_INVAL or NFS4ERR_PERM).
+Requests that are not permitted MUST be rejected with NFS4ERR_ACCESS
+({{RFC8881}} Section 15.1.6.1) or, where the refusal is because the
+requester is neither the owner nor a privileged user, NFS4ERR_PERM
+({{RFC8881}} Section 15.1.6.2).  A server that supports the attribute
+MUST NOT refuse such a request with NFS4ERR_INVAL: {{RFC8178}}
+Section 4.4.3 reserves that response to a SETATTR of the attribute
+for a server with no knowledge of it, and a client probing for
+support would take the refusal as ignorance.
 
 This document does not require a server to implement any particular
 policy, nor any particular means of configuring one.  A server that
