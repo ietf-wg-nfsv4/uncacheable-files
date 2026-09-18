@@ -266,7 +266,7 @@ the risk of data corruption.
 ## WRITE Durability {#sec_durability}
 
 The uncacheable file data attribute does not, by itself, dictate
-the `stable_how4` value a client uses on WRITE operations.  The
+the stable_how4 value a client uses on WRITE operations.  The
 protocol-level requirement is the following durability invariant:
 when the application's write call returns successfully, the WRITE
 data MUST be durable on the server.
@@ -274,10 +274,10 @@ data MUST be durable on the server.
 A client honoring the uncacheable file data attribute MAY satisfy
 this invariant by either:
 
-* issuing WRITEs with `stable_how4` of FILE_SYNC4 or DATA_SYNC4, in
+* issuing WRITEs with stable_how4 of FILE_SYNC4 or DATA_SYNC4, in
   which case the data is durable on the WRITE response, or
 
-* issuing WRITEs with `stable_how4` of UNSTABLE4 and a COMMIT that
+* issuing WRITEs with stable_how4 of UNSTABLE4 and a COMMIT that
   completes before the application's write call returns.  If the
   COMMIT response indicates a changed write verifier, the client
   MUST re-issue the affected WRITEs from the application's buffer,
