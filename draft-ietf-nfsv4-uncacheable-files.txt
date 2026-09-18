@@ -4,8 +4,8 @@
 
 Network File System Version 4                                  T. Haynes
 Internet-Draft                                               Hammerspace
-Intended status: Standards Track                       15 September 2026
-Expires: 19 March 2027
+Intended status: Standards Track                       18 September 2026
+Expires: 22 March 2027
 
 
           Adding an Uncacheable File Data Attribute to NFSv4.2
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 March 2027.
+   This Internet-Draft will expire on 22 March 2027.
 
 Copyright Notice
 
@@ -358,11 +358,19 @@ Table of Contents
    obtained by READ and WRITE sent to the metadata server.
 
    A client honoring the attribute satisfies the durability invariant of
-   Section 5.2 for data written through a layout by the same two means,
-   applied to the storage device: a WRITE with stable_how4 of FILE_SYNC4
-   or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT to that
-   storage device before the application's write call returns.  The
-   client revalidates the change attribute and size, as Section 5.3
+   Section 5.2 for data written through a layout before the
+   application's write call returns, by whatever means the layout type's
+   storage protocol provides.  Where that protocol is NFS, as for the
+   file layout ([RFC8881] Section 13) and the flexible file layout
+   ([RFC8435]), the means are those of Section 5.2 applied to the
+   storage device: a WRITE with stable_how4 of FILE_SYNC4 or DATA_SYNC4,
+   or an UNSTABLE4 WRITE followed by a COMMIT to that storage device.
+   Where it is not, as for the block ([RFC5663]) and SCSI ([RFC8154])
+   layouts, the storage protocol's own means of committing a write to
+   stable storage serves; [RFC8154] Section 2.8, for example, has the
+   server flush a volatile write cache before LAYOUTCOMMIT returns, so
+   that for such a layout LAYOUTCOMMIT is itself the durability step.
+   The client revalidates the change attribute and size, as Section 5.3
    requires, at the metadata server.
 
    Whether the metadata server's change attribute and size reflect a
@@ -580,6 +588,15 @@ Table of Contents
               Technology--Portable Operating System Interface (POSIX)
               Base Specifications, Issue 8", IEEE Std 1003.1-2024, 2024,
               <https://standards.ieee.org/ieee/1003.1/7700/>.
+
+   [RFC5663]  Black, D., Fridella, S., and J. Glasgow, "Parallel NFS
+              (pNFS) Block/Volume Layout", RFC 5663,
+              DOI 10.17487/RFC5663, January 2010,
+              <https://www.rfc-editor.org/rfc/rfc5663>.
+
+   [RFC8154]  Hellwig, C., "Parallel NFS (pNFS) Small Computer System
+              Interface (SCSI) Layout", RFC 8154, DOI 10.17487/RFC8154,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8154>.
 
    [RFC8435]  Halevy, B. and T. Haynes, "Parallel NFS (pNFS) Flexible
               File Layout", RFC 8435, DOI 10.17487/RFC8435, August 2018,

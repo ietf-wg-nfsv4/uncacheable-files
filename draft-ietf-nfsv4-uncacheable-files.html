@@ -1055,7 +1055,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Haynes</td>
-<td class="center">Expires 19 March 2027</td>
+<td class="center">Expires 22 March 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg {
 <dd class="internet-draft">draft-ietf-nfsv4-uncacheable-files-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-15" class="published">15 September 2026</time>
+<time datetime="2026-09-18" class="published">18 September 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-19">19 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-03-22">22 March 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1129,7 +1129,7 @@ code and issues list for this draft can be found at
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 19 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1448,7 +1448,7 @@ the risk of data corruption.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-write-durability" class="section-name selfRef">WRITE Durability</a>
         </h3>
 <p id="section-5.2-1">The uncacheable file data attribute does not, by itself, dictate
-the <code>stable_how4</code> value a client uses on WRITE operations.  The
+the stable_how4 value a client uses on WRITE operations.  The
 protocol-level requirement is the following durability invariant:
 when the application's write call returns successfully, the WRITE
 data <span class="bcp14">MUST</span> be durable on the server.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
@@ -1456,11 +1456,11 @@ data <span class="bcp14">MUST</span> be durable on the server.<a href="#section-
 this invariant by either:<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.2-3.1">
-            <p id="section-5.2-3.1.1">issuing WRITEs with <code>stable_how4</code> of FILE_SYNC4 or DATA_SYNC4, in
+            <p id="section-5.2-3.1.1">issuing WRITEs with stable_how4 of FILE_SYNC4 or DATA_SYNC4, in
 which case the data is durable on the WRITE response, or<a href="#section-5.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.2-3.2">
-            <p id="section-5.2-3.2.1">issuing WRITEs with <code>stable_how4</code> of UNSTABLE4 and a COMMIT that
+            <p id="section-5.2-3.2.1">issuing WRITEs with stable_how4 of UNSTABLE4 and a COMMIT that
 completes before the application's write call returns.  If the
 COMMIT response indicates a changed write verifier, the client
 <span class="bcp14">MUST</span> re-issue the affected WRITEs from the application's buffer,
@@ -1546,12 +1546,21 @@ through a layout from a storage device is the same file data, and a
 client honoring the attribute treats it exactly as it treats data
 obtained by READ and WRITE sent to the metadata server.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
 <p id="section-5.5-2">A client honoring the attribute satisfies the durability invariant
-of <a href="#sec_durability" class="auto internal xref">Section 5.2</a> for data written through a layout by the same
-two means, applied to the storage device: a WRITE with stable_how4 of
+of <a href="#sec_durability" class="auto internal xref">Section 5.2</a> for data written through a layout before the
+application's write call returns, by whatever means the layout
+type's storage protocol provides.  Where that protocol is NFS, as
+for the file layout (<span>[<a href="#RFC8881" class="cite xref">RFC8881</a>]</span> Section 13) and the flexible file
+layout (<span>[<a href="#RFC8435" class="cite xref">RFC8435</a>]</span>), the means are those of <a href="#sec_durability" class="auto internal xref">Section 5.2</a>
+applied to the storage device: a WRITE with stable_how4 of
 FILE_SYNC4 or DATA_SYNC4, or an UNSTABLE4 WRITE followed by a COMMIT
-to that storage device before the application's write call returns.
-The client revalidates the change attribute and size, as
-<a href="#sec_read_caching" class="auto internal xref">Section 5.3</a> requires, at the metadata server.<a href="#section-5.5-2" class="pilcrow">¶</a></p>
+to that storage device.  Where it is not, as for the block
+(<span>[<a href="#RFC5663" class="cite xref">RFC5663</a>]</span>) and SCSI (<span>[<a href="#RFC8154" class="cite xref">RFC8154</a>]</span>) layouts, the storage protocol's
+own means of committing a write to stable storage serves;
+<span>[<a href="#RFC8154" class="cite xref">RFC8154</a>]</span> Section 2.8, for example, has the server flush a volatile
+write cache before LAYOUTCOMMIT returns, so that for such a layout
+LAYOUTCOMMIT is itself the durability step.  The client revalidates
+the change attribute and size, as <a href="#sec_read_caching" class="auto internal xref">Section 5.3</a> requires, at
+the metadata server.<a href="#section-5.5-2" class="pilcrow">¶</a></p>
 <p id="section-5.5-3">Whether the metadata server's change attribute and size reflect a
 write to a storage device before the writer sends LAYOUTCOMMIT
 depends on the layout type and the control protocol (<span>[<a href="#RFC8881" class="cite xref">RFC8881</a>]</span>
@@ -1796,6 +1805,14 @@ NFSv4.2.<a href="#section-10-5" class="pilcrow">¶</a></p>
 <dt id="POSIX">[POSIX]</dt>
         <dd>
 <span class="refAuthor">IEEE</span> and <span class="refAuthor">The Open Group</span>, <span class="refTitle">"IEEE Standard for Information Technology--Portable Operating System Interface (POSIX) Base Specifications, Issue 8"</span>, <span class="seriesInfo">IEEE Std 1003.1-2024</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://standards.ieee.org/ieee/1003.1/7700/">https://standards.ieee.org/ieee/1003.1/7700/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5663">[RFC5663]</dt>
+        <dd>
+<span class="refAuthor">Black, D.</span>, <span class="refAuthor">Fridella, S.</span>, and <span class="refAuthor">J. Glasgow</span>, <span class="refTitle">"Parallel NFS (pNFS) Block/Volume Layout"</span>, <span class="seriesInfo">RFC 5663</span>, <span class="seriesInfo">DOI 10.17487/RFC5663</span>, <time datetime="2010-01" class="refDate">January 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5663">https://www.rfc-editor.org/rfc/rfc5663</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8154">[RFC8154]</dt>
+        <dd>
+<span class="refAuthor">Hellwig, C.</span>, <span class="refTitle">"Parallel NFS (pNFS) Small Computer System Interface (SCSI) Layout"</span>, <span class="seriesInfo">RFC 8154</span>, <span class="seriesInfo">DOI 10.17487/RFC8154</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8154">https://www.rfc-editor.org/rfc/rfc8154</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8435">[RFC8435]</dt>
         <dd>
